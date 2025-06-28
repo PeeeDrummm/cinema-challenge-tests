@@ -15,7 +15,7 @@ Criar um novo usuário com dados válidos e únicos
     Salvar Token de Autenticação
 
 Realizar Login com Credenciais Válidas
-    [Tags]    API    CT002
+    [Tags]    API    CT005
     Remover Usuário do Banco de Dados    pedro.teste@qa.com
     Inserir Usuário no Banco de Dados    Pedro Afonso    pedro.teste@qa.com    senha123
     Realizar Login
