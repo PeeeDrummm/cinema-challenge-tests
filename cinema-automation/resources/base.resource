@@ -1,9 +1,12 @@
 *** Settings ***
 Documentation    Arquivo base com inicialização de sessão e variáveis comuns
 Library          RequestsLibrary
+Library          OperatingSystem
+Library          Collections
+Library          ../utils/db_keywords.py
 
 *** Variables ***
-${BASE_API_URL}    https://cinema-challenge-back.onrender.com/api/v1
+${BASE_API_URL}    http://localhost:3000/api/v1
 
 *** Keywords ***
 Criar Sessão API

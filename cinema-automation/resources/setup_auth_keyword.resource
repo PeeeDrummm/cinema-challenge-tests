@@ -1,15 +1,14 @@
 *** Settings ***
 Documentation    Keywords para o Endpoint de Autenticação  
 
-Library          RequestsLibrary
-Library          Collections
+Resource        ./base.resource
 
 *** Keywords ***
 Registrar um Novo Usuário
     # Monta o corpo com dados fixos para o registro
     ${body}=    Create Dictionary
-    ...         name=João da Silva
-    ...         email=joao.silva10@teste.com
+    ...         name=Pedro Afonso
+    ...         email=pedro.teste@qa.com
     ...         password=senha123
     
     # Executa o POST e salva a última resposta na suíte
