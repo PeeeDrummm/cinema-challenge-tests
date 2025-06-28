@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      MONGO_URI: ${{ secrets.MONGO_URI }}  # 🔒 Lido pelo db_keywords.py
+      MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
       - name: Checkout repository
@@ -25,6 +25,10 @@ jobs:
       - name: Install dependencies
         run: |
           pip install -r cinema-automation/requirements.txt
+
+      - name: Install Playwright browsers
+        run: |
+          python -m playwright install --with-deps
 
       - name: Run Robot Framework tests
         run: |
