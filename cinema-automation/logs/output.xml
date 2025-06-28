@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot generator="Robot 7.2.2 (Python 3.10.6 on win32)" generated="2025-06-28T10:44:40.307077" rpa="false" schemaversion="5">
+<suite id="s1" name="Setup Auth Test" source="C:\Users\Pedro\Documents\Compass UOL\Outros Repositórios\cinema-challenge-tests\cinema-automation\tests\setup_auth_test.robot">
+<kw name="Criar Sessão API" owner="base" type="SETUP">
+<kw name="Create Session" owner="RequestsLibrary">
+<msg time="2025-06-28T10:44:40.512827" level="INFO">Creating Session using : alias=CinemaAPP, url=https://cinema-challenge-back.onrender.com/api/v1, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<arg>CinemaAPP</arg>
+<arg>${BASE_API_URL}</arg>
+<doc>Create Session: create a HTTP session to a server</doc>
+<status status="PASS" start="2025-06-28T10:44:40.512827" elapsed="0.001013"/>
+</kw>
+<status status="PASS" start="2025-06-28T10:44:40.511823" elapsed="0.002017"/>
+</kw>
+<test id="s1-t1" name="Criar um novo usuário com dados válidos e únicos" line="10">
+<kw name="Registrar um Novo Usuário" owner="setup_auth_keyword">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-06-28T10:44:40.514856" level="INFO">${body} = {'name': 'João da Silva', 'email': 'joao.silva10@teste.com', 'password': 'senha123'}</msg>
+<var>${body}</var>
+<arg>name=João da Silva</arg>
+<arg>email=joao.silva10@teste.com</arg>
+<arg>password=senha123</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-06-28T10:44:40.514856" elapsed="0.000000"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2025-06-28T10:44:41.581713" level="INFO">POST Request : url=https://cinema-challenge-back.onrender.com/api/v1/auth/register 
+ path_url=/api/v1/auth/register 
+ headers={'User-Agent': 'python-requests/2.32.3', 'Accept-Encoding': 'gzip, deflate, br', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '89', 'Content-Type': 'application/json'} 
+ body=b'{"name": "Jo\\u00e3o da Silva", "email": "joao.silva10@teste.com", "password": "senha123"}' 
+ </msg>
+<msg time="2025-06-28T10:44:41.581713" level="INFO">POST Response : url=https://cinema-challenge-back.onrender.com/api/v1/auth/register 
+ status=201, reason=Created 
+ headers={'Date': 'Sat, 28 Jun 2025 13:44:40 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Content-Length': '263', 'Connection': 'keep-alive', 'access-control-allow-credentials': 'true', 'Content-Encoding': 'br', 'cross-origin-opener-policy': 'same-origin', 'cross-origin-resource-policy': 'same-origin', 'etag': 'W/"137-4CP0pVDRJq6BJqwrn7Xcc7+aSnI"', 'origin-agent-cluster': '?1', 'referrer-policy': 'no-referrer', 'rndr-id': '97e8e879-180f-426e', 'strict-transport-security': 'max-age=31536000; includeSubDomains', 'vary': 'Origin, Accept-Encoding, Accept-Encoding', 'x-content-type-options': 'nosniff', 'x-dns-prefetch-control': 'off', 'x-download-options': 'noopen', 'x-frame-options': 'SAMEORIGIN', 'x-permitted-cross-domain-policies': 'none', 'x-render-origin-server': 'Render', 'x-xss-protection': '0', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '956d9ebe59167c07-CNF', 'alt-svc': 'h3=":443"; ma=86400'} 
+ body={"success":true,"data":{"_id":"685ff1c7eabf866ee4902d9a","name":"João da Silva","email":"joao.silva10@teste.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWZmMWM3ZWFiZjg2NmVlNDkwMmQ5YSIsImlhdCI6MTc1MTExODI4MCwiZXhwIjoxNzUxMjA0NjgwfQ.cJo_nJzbYnoEDbvWVaWxHZrRsh66hIw6PI7ed1zNGbM"}} 
+ </msg>
+<msg time="2025-06-28T10:44:41.581713" level="INFO">${response} = &lt;Response [201]&gt;</msg>
+<var>${response}</var>
+<arg>${BASE_API_URL}/auth/register</arg>
+<arg>json=${body}</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2025-06-28T10:44:40.515841" elapsed="1.066886"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-28T10:44:41.583727" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [201]&gt;</msg>
+<arg>${ULTIMA_RESPOSTA}</arg>
+<arg>${response}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-28T10:44:41.582727" elapsed="0.001000"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2025-06-28T10:44:41.583727" elapsed="0.000000"/>
+</return>
+<status status="PASS" start="2025-06-28T10:44:40.514856" elapsed="1.068871"/>
+</kw>
+<kw name="Validar Código de Status" owner="base">
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-28T10:44:41.584715" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ULTIMA_RESPOSTA.status_code}</arg>
+<arg>${status_esperado}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-28T10:44:41.584715" elapsed="0.001001"/>
+</kw>
+<arg>201</arg>
+<status status="PASS" start="2025-06-28T10:44:41.584715" elapsed="0.001001"/>
+</kw>
+<kw name="Salvar Token De Autenticação" owner="setup_auth_keyword">
+<kw name="Convert To Dictionary" owner="Collections">
+<msg time="2025-06-28T10:44:41.586729" level="INFO">${json} = {'success': True, 'data': {'_id': '685ff1c7eabf866ee4902d9a', 'name': 'João da Silva', 'email': 'joao.silva10@teste.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWZ...</msg>
+<var>${json}</var>
+<arg>${ULTIMA_RESPOSTA.json()}</arg>
+<doc>Converts the given ``item`` to a Python ``dict`` type.</doc>
+<status status="PASS" start="2025-06-28T10:44:41.585716" elapsed="0.001013"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-28T10:44:41.587728" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NWZmMWM3ZWFiZjg2NmVlNDkwMmQ5YSIsImlhdCI6MTc1MTExODI4MCwiZXhwIjoxNzUxMjA0NjgwfQ.cJo_nJzbYnoEDbvWVaWxHZrRsh66hIw6PI7ed1zNGbM</msg>
+<arg>${TOKEN}</arg>
+<arg>${json["data"]["token"]}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-28T10:44:41.586729" elapsed="0.000999"/>
+</kw>
+<status status="PASS" start="2025-06-28T10:44:41.585716" elapsed="0.002012"/>
+</kw>
+<tag>API</tag>
+<tag>CT001</tag>
+<status status="PASS" start="2025-06-28T10:44:40.513840" elapsed="1.074875"/>
+</test>
+<doc>Testes para o Endpoint de Autenticação</doc>
+<status status="PASS" start="2025-06-28T10:44:40.310077" elapsed="1.278638"/>
+</suite>
+<statistics>
+<total>
+<stat pass="1" fail="0" skip="0">All Tests</stat>
+</total>
+<tag>
+<stat pass="1" fail="0" skip="0">API</stat>
+<stat pass="1" fail="0" skip="0">CT001</stat>
+</tag>
+<suite>
+<stat name="Setup Auth Test" id="s1" pass="1" fail="0" skip="0">Setup Auth Test</stat>
+</suite>
+</statistics>
+<errors>
+</errors>
+</robot>
