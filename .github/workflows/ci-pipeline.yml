@@ -4,65 +4,68 @@ on:
   push:
     branches:
       - develop
+  # Opcional: Adicionar "pull_request" para rodar também ao abrir PRs para a develop
+  # pull_request:
+  #   branches:
+  #     - develop
 
 jobs:
   run-tests:
     name: Run Robot Framework Tests
-    runs-on: ubuntu-latest
+    # A CORREÇÃO PRINCIPAL: Usar uma versão estável e de longo suporte do Ubuntu
+    runs-on: ubuntu-22.04
 
+    # As variáveis de ambiente, como o MONGO_URI, podem ser definidas aqui
+    # ou diretamente no passo que as utiliza.
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
+      # Adicione também o JWT_SECRET aqui, pois sua automação de API precisará dele!
+      # JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
       - name: Install Python dependencies
-        run: |
-          pip install -r cinema-automation/requirements.txt
+        # Simplifiquei para usar a working-directory, evitando múltiplos 'cd'
+        working-directory: ./cinema-automation
+        run: pip install -r requirements.txt
 
       - name: Install Playwright system dependencies
-        run: |
-          python -m playwright install-deps
+        # Esta etapa agora funcionará corretamente no ubuntu-22.04
+        run: python -m playwright install-deps
 
       - name: Install Playwright browsers
-        run: |
-          python -m playwright install
+        run: python -m playwright install
 
       - name: Run Robot Framework tests
-        run: |
-          cd cinema-automation
-          robot --outputdir logs tests/
-
-      - name: Check if tests passed
-        id: test-result
-        run: |
-          if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "❌ Tests failed."
-            exit 1
-          else
-            echo "✅ All tests passed."
-          fi
+        working-directory: ./cinema-automation
+        # O próprio comando 'robot' retornará um código de erro se algum teste falhar,
+        # o que já faz o passo (e o job) falhar automaticamente.
+        run: robot --outputdir logs tests/
 
   create-pr:
     name: Create Pull Request to main
+    # 'needs' garante que este job só rode se 'run-tests' for concluído com sucesso
     needs: run-tests
     runs-on: ubuntu-latest
+    # 'if: success()' é redundante quando se usa 'needs', mas não causa problemas
     if: success()
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v5
+        uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
+          # O head-branch deve ser a branch que você quer mesclar
           branch: develop
           base: main
           title: "🔁 Merge develop into main after successful tests"
