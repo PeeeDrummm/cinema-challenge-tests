@@ -1,16 +1,48 @@
 from robot.api.deco import keyword
 from robot.libraries.BuiltIn import BuiltIn
 from pymongo import MongoClient
+import bcrypt
+import os
 
-# Conexão com MongoDB Atlas
-client = MongoClient("mongodb+srv://Pedrum2025:lvUMqoXAGsCm9jjW@cluster0.xll4lik.mongodb.net/cinemaapp?retryWrites=true&w=majority&appName=Cluster0")
+# Carrega .env se estiver local
+try:
+    from dotenv import load_dotenv
+    load_dotenv()
+except ImportError:
+    pass
 
+# Conexão MongoDB
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise ValueError("❌ MONGO_URI não definida. Configure no .env ou GitHub Secrets.")
+
+client = MongoClient(MONGO_URI)
 db = client["cinemaapp"]
 users = db["users"]
 
 @keyword("Remover Usuário do Banco de Dados")
 def remove_user(email):
     result = users.delete_many({"email": email})
-    msg = f"Usuário(s) com email '{email}' removido(s): {result.deleted_count}"
+    msg = f"🧹 Usuário(s) com email '{email}' removido(s): {result.deleted_count}"
+    print(msg)
+    BuiltIn().log(msg, level="INFO")
+
+@keyword("Inserir Usuário no Banco de Dados")
+def insert_user(name, email, password):
+    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt(8))
+
+    doc = {
+        "name": name,
+        "email": email,
+        "password": hashed_password
+    }
+
+    result = users.insert_one(doc)
+
+    # Armazena os dados para uso posterior no Robot
+    BuiltIn().set_suite_variable("${TEST_USER_EMAIL}", email)
+    BuiltIn().set_suite_variable("${TEST_USER_PASSWORD}", password)
+
+    msg = f"✅ Usuário '{email}' inserido com ID: {result.inserted_id}"
     print(msg)
     BuiltIn().log(msg, level="INFO")
