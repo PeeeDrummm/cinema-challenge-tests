@@ -17,18 +17,22 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Set up Python
+      - name: Set up Python 3.10
         uses: actions/setup-python@v4
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      # ▶️ Instala dependências nativas e navegadores para Playwright
+      - name: Install Playwright dependencies & browsers
+        uses: microsoft/playwright-github-action@v1
+        with:
+          # faz apt-get update + instala libs e browsers automaticamente
+          install-deps: true
+          browser: all
+
+      - name: Install Python dependencies
         run: |
           pip install -r cinema-automation/requirements.txt
-
-      - name: Install Playwright browsers
-        run: |
-          python -m playwright install --with-deps
 
       - name: Run Robot Framework tests
         run: |
