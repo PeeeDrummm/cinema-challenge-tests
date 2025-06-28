@@ -1,1 +1,58 @@
+name: CI/CD - Cinema Automation
 
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  run-tests:
+    name: Run Robot Framework Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r cinema-automation/requirements.txt
+
+      - name: Run Robot Framework tests
+        run: |
+          cd cinema-automation
+          robot --outputdir logs tests/
+
+      - name: Check if tests passed
+        id: test-result
+        run: |
+          if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
+            echo "Tests failed"
+            exit 1
+          fi
+
+  create-pr:
+    name: Create PR if tests passed
+    needs: run-tests
+    runs-on: ubuntu-latest
+    if: success()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Create Pull Request to main
+        uses: peter-evans/create-pull-request@v5
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          branch: develop
+          base: main
+          title: "Merge develop into main after successful tests"
+          body: |
+            ✅ Testes automatizados passaram com sucesso.
+            🔄 PR gerada automaticamente pelo GitHub Actions.
