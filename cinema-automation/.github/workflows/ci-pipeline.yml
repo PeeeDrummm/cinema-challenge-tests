@@ -1,4 +1,4 @@
-name: CI/CD - Cinema Automation
+name: CI/CD - Cinema Challenge Tests
 
 on:
   push:
@@ -9,6 +9,9 @@ jobs:
   run-tests:
     name: Run Robot Framework Tests
     runs-on: ubuntu-latest
+
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}  # 🔒 Lido pelo db_keywords.py
 
     steps:
       - name: Checkout repository
@@ -32,12 +35,14 @@ jobs:
         id: test-result
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "Tests failed"
+            echo "❌ Tests failed."
             exit 1
+          else
+            echo "✅ All tests passed."
           fi
 
   create-pr:
-    name: Create PR if tests passed
+    name: Create Pull Request to main
     needs: run-tests
     runs-on: ubuntu-latest
     if: success()
@@ -46,13 +51,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Create Pull Request to main
+      - name: Create Pull Request
         uses: peter-evans/create-pull-request@v5
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           branch: develop
           base: main
-          title: "Merge develop into main after successful tests"
+          title: "🔁 Merge develop into main after successful tests"
           body: |
             ✅ Testes automatizados passaram com sucesso.
-            🔄 PR gerada automaticamente pelo GitHub Actions.
+            Esta PR foi gerada automaticamente pelo GitHub Actions.
