@@ -1,1 +1,3 @@
-bcrypt
+robotframework
+robotframework-dotenv
+pymongo
