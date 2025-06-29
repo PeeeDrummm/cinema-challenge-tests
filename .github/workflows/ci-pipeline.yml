@@ -15,6 +15,8 @@ jobs:
     name: Run Robot Framework Tests
     runs-on: ubuntu-22.04
 
+    # Bloco de variáveis de ambiente para o job de testes.
+    # Elas são lidas dos "Secrets" do seu repositório.
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       # JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -49,16 +51,16 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # A CORREÇÃO: Adicionamos este passo para baixar o código no ambiente do job.
+      # Este job também precisa fazer o checkout para ter acesso ao repositório
       - name: Checkout repository
         uses: actions/checkout@v4
 
       - name: Create Pull Request if one does not exist
         env:
-          # O GITHUB_TOKEN é um segredo especial que o GitHub fornece automaticamente
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Usamos o nosso Personal Access Token (PAT) para dar permissão de criação de PR
+          GITHUB_TOKEN: ${{ secrets.PAT }}
         run: |
-          # Uma forma mais robusta de verificar se já existe um PR aberto
+          # Uma forma robusta de verificar se já existe um PR aberto
           EXISTING_PR=$(gh pr list --head develop --base main --state open --json number -q '.[0].number')
           
           if [ -z "$EXISTING_PR" ]; then
