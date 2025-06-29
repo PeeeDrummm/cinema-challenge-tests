@@ -1,5 +1,7 @@
 name: CI/CD - Cinema Challenge Tests
 
+# A CORREÇÃO: Removemos o gatilho de 'pull_request'.
+# O workflow agora só roda quando há um push para a 'develop'.
 on:
   push:
     branches:
