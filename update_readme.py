@@ -11,7 +11,7 @@ def update_readme():
     e atualiza o README.md a partir de um template.
     """
     try:
-        # Caminho para o arquivo de resultados do Robot
+        # Caminho para o ficheiro de resultados do Robot
         output_xml_path = 'cinema-automation/logs/output.xml'
         tree = ET.parse(output_xml_path)
         root = tree.getroot()
@@ -60,7 +60,7 @@ def update_readme():
         print("✅ README.md atualizado com sucesso com resultados detalhados!")
 
     except FileNotFoundError:
-        print(f"❌ Erro Crítico: O arquivo de resultados dos testes '{output_xml_path}' não foi encontrado.")
+        print(f"❌ Erro Crítico: O ficheiro de resultados dos testes '{output_xml_path}' não foi encontrado.")
         print("Isso geralmente acontece se os testes não foram executados ou falharam antes da geração do log.")
         exit(1)
     except Exception as e:
