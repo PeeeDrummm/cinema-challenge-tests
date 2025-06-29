@@ -70,7 +70,6 @@ jobs:
             ✅ Testes automatizados passaram com sucesso.
             📊 README atualizado com os resultados.
             Este PR foi gerado automaticamente e está pronto para o auto-merge.
-
       # --- ETAPA 4: AUTO-MERGE (SE VOCÊ FOR O AUTOR) ---
       - name: Enable Auto-Merge for Owner
         if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
