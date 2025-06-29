@@ -1,0 +1,14 @@
+# Ficheiros de log e relatório gerados pelo Robot Framework
+/cinema-automation/logs/
+/logs/
+
+# Ficheiros de cache do Python
+**/__pycache__/
+
+# Ficheiros de ambiente virtual do Python
+.venv/
+venv/
+.env
+
+# Ficheiros de configuração de IDEs
+.vscode/
