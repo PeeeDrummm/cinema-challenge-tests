@@ -1,13 +1,10 @@
 name: CI/CD - Cinema Challenge Tests
 
-# A CORREÇÃO: Removemos o gatilho de 'pull_request'.
-# O workflow agora só roda quando há um push para a 'develop'.
 on:
   push:
     branches:
       - develop
 
-# Permissões necessárias para o workflow interagir com o repositório
 permissions:
   contents: write
   pull-requests: write
@@ -15,9 +12,14 @@ permissions:
 jobs:
   test-and-manage-pr:
     name: Test, Update README, and Manage PR
+    
+    # A CORREÇÃO ANTI-LOOP (Parte 1):
+    # Este job inteiro só será executado se a mensagem do último commit
+    # NÃO contiver a etiqueta '[skip ci]'.
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
     runs-on: ubuntu-22.04
 
-    # Variáveis de ambiente secretas disponíveis para todos os passos deste job
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -44,28 +46,23 @@ jobs:
         run: python -m playwright install
 
       - name: Run Robot Framework tests
-        # Garante que o comando seja executado na pasta correta
         working-directory: ./cinema-automation
         run: robot --outputdir logs tests/
 
       # --- ETAPA 2: ATUALIZAÇÃO DO README ---
       - name: Update README.md with test results
         run: python update_readme.py
-        # Continua mesmo se este passo falhar, para não bloquear o PR
         continue-on-error: true 
 
-      # --- ETAPA 3: COMMIT E CRIAÇÃO INTELIGENTE DO PULL REQUEST ---
+      # --- ETAPA 3: COMMIT E CRIAÇÃO DO PULL REQUEST ---
       - name: Create Pull Request with updated README
         id: cpr
-        # Esta ação especializada faz tudo o que precisamos:
-        # 1. Verifica se há mudanças (como o README.md atualizado).
-        # 2. Se houver, faz o commit dessas mudanças.
-        # 3. Cria um Pull Request da 'develop' para a 'main'.
-        # 4. Se não houver mudanças, não faz nada e termina com sucesso.
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PAT }}
-          commit-message: "docs: 🤖 Atualiza README com os últimos resultados dos testes"
+          # A CORREÇÃO ANTI-LOOP (Parte 2):
+          # Adicionamos a etiqueta '[skip ci]' na mensagem do commit que o robô faz.
+          commit-message: "docs: 🤖 Atualiza README com os últimos resultados dos testes [skip ci]"
           branch: develop
           base: main
           title: "🔁 [Automated] Merge develop into main"
@@ -74,15 +71,12 @@ jobs:
             📊 README atualizado com os resultados.
             Este PR foi gerado automaticamente e está pronto para o auto-merge.
 
-      # --- ETAPA 4: AUTO-MERGE CONDICIONAL ---
+      # --- ETAPA 4: AUTO-MERGE (SE VOCÊ FOR O AUTOR) ---
       - name: Enable Auto-Merge for Owner
-        # Este passo só roda se um PR foi DE FATO criado ou atualizado
-        # E se o autor do push original for VOCÊ.
         if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
         run: |
           echo "Workflow initiated by repository owner. Enabling auto-merge for PR #${{ steps.cpr.outputs.pull-request-number }}"
-          # Faz o merge, mas NÃO deleta a branch 'develop'
           gh pr merge "$PR_URL" --auto --squash
