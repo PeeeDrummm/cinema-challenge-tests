@@ -5,7 +5,7 @@ on:
     branches:
       - develop
 
-# A CORREÇÃO: Adicionamos este bloco para dar permissão de escrita ao workflow.
+# Permissões necessárias para que a Action possa criar um PR
 permissions:
   contents: write
   pull-requests: write
@@ -44,25 +44,29 @@ jobs:
 
   create-pr:
     name: Create Pull Request to main
+    # Garante que este job só rode se 'run-tests' for concluído com sucesso
     needs: run-tests
     runs-on: ubuntu-latest
-    if: success()
 
     steps:
-      - name: Checkout repository
-        # É importante fazer o checkout com a branch develop para que a ação saiba de onde veio
-        uses: actions/checkout@v4
-        with:
-          ref: develop
-
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          # O head-branch deve ser a branch que você quer mesclar
-          branch: develop # A branch que contém as mudanças
-          base: main      # A branch que receberá as mudanças
-          title: "🔁 Merge develop into main after successful tests"
-          body: |
-            ✅ Testes automatizados passaram com sucesso.
-            Esta PR foi gerada automaticamente pelo GitHub Actions.
+      - name: Create Pull Request if one does not exist
+        # Esta etapa usa a ferramenta oficial do GitHub (gh)
+        env:
+          # O GITHUB_TOKEN é um segredo especial que o GitHub fornece automaticamente
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Verifica se já existe um PR aberto da 'develop' para a 'main'
+          gh pr list --head develop --base main --state open --limit 1 | grep "No open pull requests found"
+          
+          # A linha acima falhará se um PR for encontrado. Se não falhar (ou seja, se a mensagem "No open pull requests" for encontrada),
+          # significa que podemos criar um novo PR. O '|| true' garante que o passo continue mesmo se o grep falhar.
+          if [ $? -eq 0 ]; then
+            echo "No open PR found from develop to main. Creating a new one."
+            gh pr create \
+              --base main \
+              --head develop \
+              --title "🔁 [Automated] Merge develop into main after successful tests" \
+              --body "✅ Testes automatizados passaram com sucesso. PR gerado automaticamente."
+          else
+            echo "Pull Request from develop to main already exists. Nothing to do."
+          fi
