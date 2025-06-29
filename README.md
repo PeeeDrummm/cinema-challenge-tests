@@ -10,9 +10,18 @@ Este projeto contém testes automatizados funcionais para a aplicação Cinema C
 | :---: | :---: | :---: | :---: |
 | ![Status](https://img.shields.io/badge/Status-PASSOU-green?style=for-the-badge) | **2** | **2** | **0** |
 
-*Última execução bem-sucedida na branch `develop`:* `28/06/2025 às 21:52:53 (-03)`
+*Última execução bem-sucedida na branch `develop`:* `28/06/2025 às 22:27:00 (-03)`
 
-➡️ *Para ver o relatório detalhado, baixe os artefatos da última execução na aba **Actions**.*
+➡️ *[Clique aqui para ver o relatório detalhado na aba Actions](https://github.com/PeeeDrummm/cinema-challenge-tests/actions)*
+
+<details>
+  <summary><strong>Clique para ver os resultados detalhados de cada teste</strong></summary>
+  
+  | Teste Executado | Status |
+  | :--- | :--- |
+  | Criar um novo usuário com dados válidos e únicos | ✅ PASS |
+| Realizar Login com Credenciais Válidas | ✅ PASS |
+</details>
 
 ---
 
