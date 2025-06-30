@@ -1,82 +1,61 @@
-
-name: CI/CD - Cinema Challenge Tests
+# .github/workflows/ci-cd-pipeline.yml
+name: CI/CD Pipeline
 
 on:
   push:
     branches:
       - develop
 
-permissions:
-  contents: write
-  pull-requests: write
-
 jobs:
-  test-and-manage-pr:
-    name: Test, Update README, and Manage PR
-    
-    # Lógica anti-loop: não roda se o commit foi feito pelo bot
-    if: "!contains(github.event.head_commit.message, '[skip ci]')"
-
-    runs-on: ubuntu-22.04
-
-    env:
-      MONGO_URI: ${{ secrets.MONGO_URI }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+  test-and-deploy:
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout repository
+      - name: 📥 Checkout do Repositório
         uses: actions/checkout@v4
 
-      # --- ETAPA 1: EXECUÇÃO DOS TESTES ---
-      - name: Set up Python
+      - name: 🐍 Configura Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10'
+          python-version: '3.11'
 
-      - name: Install Python dependencies
+      - name: 📦 Instala Dependências
         run: |
-          pip install -r cinema-automation/requirements.txt
-          pip install pytz
-      
-      - name: Install Playwright system dependencies
-        run: python -m playwright install-deps
+          pip install -r requirements.txt
+          python -m pip install robotframework
+          python -m pip install robotframework-browser
+          rfbrowser init
 
-      - name: Install Playwright browsers
-        run: python -m playwright install
+      - name: 🧪 Executa os Testes Robot
+        run: |
+          robot -d cinema-automation/logs tests/
 
-      - name: Run Robot Framework tests
-        working-directory: ./cinema-automation
-        run: robot --outputdir logs tests/
+      - name: 🧠 Atualiza README.md com Resultados
+        run: |
+          python update_readme.py
 
-      # --- ETAPA 2: ATUALIZAÇÃO DO README ---
-      - name: Update README.md with test results
-        run: python update_readme.py
-        continue-on-error: true 
+      - name: 🚨 Interrompe se houver Falha nos Testes
+        if: failure()
+        run: |
+          echo "❌ Alguns testes falharam. O PR não será criado."
+          exit 1
 
-      # --- ETAPA 3: COMMIT E CRIAÇÃO DO PULL REQUEST ---
-      - name: Create Pull Request with updated README
-        id: cpr
+      - name: 🤖 Cria PR da develop para main
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT }}
-          # Adicionamos a etiqueta '[skip ci]' para evitar o loop
-          commit-message: "docs: 🤖 Atualiza README com os últimos resultados dos testes [skip ci]"
-          branch: develop
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "docs: 🤖 Atualiza README e testes [skip ci]"
+          title: "Merge Automático: develop ➡️ main"
+          body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
           base: main
-          title: "🔁 [Automated] Merge develop into main"
-          body: |
-            ✅ Testes automatizados passaram com sucesso.
-            📊 README atualizado com os resultados.
-            Este PR foi gerado automaticamente.
-      # --- ETAPA 4: MERGE DIRETO (SE VOCÊ FOR O AUTOR) ---
-      - name: Merge Pull Request for Owner
-        # Este passo só roda se um PR foi criado ou atualizado
-        # E se o autor do push original for você.
-        if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
+          branch: develop
+          delete-branch: false
+          draft: false
+          labels: automerge
+
+      - name: 🔁 Faz Merge Automático do PR
+        uses: pascalgn/automerge-action@v0.16.3
+        with:
+          mergeMethod: squash
         env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
-        run: |
-          echo "Workflow initiated by repository owner. Merging PR #${{ steps.cpr.outputs.pull-request-number }}"
-          # A CORREÇÃO FINAL: Comando de merge direto, sem '--auto' e sem '--delete-branch'
-          gh pr merge "$PR_URL" --squash
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
