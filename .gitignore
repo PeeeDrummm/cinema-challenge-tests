@@ -1,14 +1,25 @@
-# Ficheiros de log e relatório gerados pelo Robot Framework
-/cinema-automation/logs/
-/cinema-automation/utils/__pycache__
+# Logs do Robot Framework
+cinema-automation/logs/
+logs/
 
-# Ficheiros de cache do Python
+# Cache Python
 **/__pycache__/
+*.pyc
 
-# Ficheiros de ambiente virtual do Python
+# Env
+.env
+.env.*
+
+# Ambiente virtual
 .venv/
 venv/
-.env
 
-# Ficheiros de configuração de IDEs
+# IDEs
 .vscode/
+.idea/
+
+# Arquivos temporários e de sistema
+*.log
+*.tmp
+.DS_Store
+Thumbs.db

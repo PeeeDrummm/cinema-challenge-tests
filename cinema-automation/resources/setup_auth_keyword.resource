@@ -31,3 +31,8 @@ Salvar Token De Autenticação
     # Converte a resposta em dicionário e salva o token para uso posterior
     ${json}=              Convert To Dictionary    ${ULTIMA_RESPOSTA.json()}
     Set Suite Variable    ${TOKEN}                 ${json["data"]["token"]}
+
+Simular Logout (Descarta o Token)
+    # Tenta acessar rota protegida com token antigo / Faz requisição SEM o token
+    ${response}=          GET                   ${BASE_API_URL}/reservations/me    expected_status=any
+    Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}

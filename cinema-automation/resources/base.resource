@@ -6,6 +6,8 @@ Library          Collections
 Library          ../utils/db_keywords.py
 
 *** Variables ***
+# Loca / Nuvem - Mudar antes de mandar para Develop
+# ${BASE_API_URL}    http://localhost:3000/api/v1
 ${BASE_API_URL}    https://cinema-challenge-back-xelh.onrender.com/api/v1
 
 *** Keywords ***
