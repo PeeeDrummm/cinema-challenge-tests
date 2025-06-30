@@ -8,9 +8,9 @@ Este projeto contém testes automatizados funcionais para a aplicação Cinema C
 
 | Status da Execução | Total de Testes | ✅ Aprovados | ❌ Reprovados |
 | :---: | :---: | :---: | :---: |
-| ![Status](https://img.shields.io/badge/Status-PASSOU-green?style=for-the-badge) | **4** | **4** | **0** |
+| ![Status](https://img.shields.io/badge/Status-PASSOU-green?style=for-the-badge) | **3** | **3** | **0** |
 
-*Última execução: `30/06/2025 às 18:07:37 (-03)`*
+*Última execução: `30/06/2025 às 18:16:40 (-03)`*
 
 ➡️ *[Clique aqui para ver o relatório detalhado na aba Actions](https://github.com/PeeeDrummm/cinema-challenge-tests/actions)*
 
@@ -19,8 +19,7 @@ Este projeto contém testes automatizados funcionais para a aplicação Cinema C
   
   | Teste Executado | Status |
   | :--- | :--- |
-  | Criar Usuário Com E-mail Existente | ✅ PASS |
-| Criar um novo usuário com dados válidos e únicos | ✅ PASS |
+  | Criar um novo usuário com dados válidos e únicos | ✅ PASS |
 | Realizar Login com Credenciais Válidas | ✅ PASS |
 | Acessar Rota Protegida Após Logout | ✅ PASS |
 </details>
