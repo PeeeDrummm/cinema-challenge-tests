@@ -20,7 +20,8 @@ Registrar um Novo Usuário
 
     Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
     RETURN    ${response}
-
+    
+    # Anterior sem a validação de valido e invalido
     # ${body}=    Create Dictionary
     # ...         name=Pedro Afonso
     # ...         email=pedro.teste@qa.com
