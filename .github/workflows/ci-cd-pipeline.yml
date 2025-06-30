@@ -21,18 +21,25 @@ jobs:
 
       - name: 📦 Instala Dependências
         run: |
-          pip install -r requirements.txt
+          pip install -r cinema-automation/requirements.txt
           python -m pip install robotframework
           python -m pip install robotframework-browser
           rfbrowser init
 
       - name: 🧪 Executa os Testes Robot
         run: |
-          robot -d cinema-automation/logs tests/
+          robot --nostatusrc -d cinema-automation/logs tests/
 
       - name: 🧠 Atualiza README.md com Resultados
         run: |
           python update_readme.py
+
+      - name: 💾 Salva Logs como Artefato
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-robot
+          path: cinema-automation/logs/
 
       - name: 🚨 Interrompe se houver Falha nos Testes
         if: failure()
