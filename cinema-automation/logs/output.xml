@@ -1,207 +1,340 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<robot generator="Robot 7.2.2 (Python 3.10.18 on linux)" generated="2025-06-29T05:01:17.959166" rpa="false" schemaversion="5">
+<robot generator="Robot 7.2.2 (Python 3.10.18 on linux)" generated="2025-06-30T18:04:10.955562" rpa="false" schemaversion="5">
 <suite id="s1" name="Tests" source="/home/runner/work/cinema-challenge-tests/cinema-challenge-tests/cinema-automation/tests">
 <suite id="s1-s1" name="Setup Auth Test" source="/home/runner/work/cinema-challenge-tests/cinema-challenge-tests/cinema-automation/tests/setup_auth_test.robot">
 <kw name="Criar Sessão API" owner="base" type="SETUP">
 <kw name="Create Session" owner="RequestsLibrary">
-<msg time="2025-06-29T05:01:18.463510" level="INFO">Creating Session using : alias=CinemaAPP, url=https://cinema-challenge-back-xelh.onrender.com/api/v1, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
+<msg time="2025-06-30T18:04:11.420505" level="INFO">Creating Session using : alias=CinemaAPP, url=https://cinema-challenge-back-xelh.onrender.com/api/v1, headers={},                     cookies={}, auth=None, timeout=None, proxies=None, verify=False,                     debug=0 </msg>
 <arg>CinemaAPP</arg>
 <arg>${BASE_API_URL}</arg>
 <doc>Create Session: create a HTTP session to a server</doc>
-<status status="PASS" start="2025-06-29T05:01:18.463298" elapsed="0.000426"/>
+<status status="PASS" start="2025-06-30T18:04:11.420323" elapsed="0.000383"/>
 </kw>
-<status status="PASS" start="2025-06-29T05:01:18.462112" elapsed="0.001706"/>
+<status status="PASS" start="2025-06-30T18:04:11.419637" elapsed="0.001162"/>
 </kw>
 <test id="s1-s1-t1" name="Criar um novo usuário com dados válidos e únicos" line="10">
 <kw name="Remover Usuário do Banco de Dados" owner="db_keywords">
-<msg time="2025-06-29T05:01:19.695832" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
-<msg time="2025-06-29T05:01:19.695982" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<msg time="2025-06-30T18:04:12.670663" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<msg time="2025-06-30T18:04:12.670788" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
 <arg>pedro.teste@qa.com</arg>
-<status status="PASS" start="2025-06-29T05:01:18.464318" elapsed="1.231744"/>
+<status status="PASS" start="2025-06-30T18:04:11.421278" elapsed="1.249581"/>
 </kw>
 <kw name="Registrar um Novo Usuário" owner="setup_auth_keyword">
 <kw name="Create Dictionary" owner="BuiltIn">
-<msg time="2025-06-29T05:01:19.697210" level="INFO">${body} = {'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'password': 'senha123'}</msg>
+<msg time="2025-06-30T18:04:12.671968" level="INFO">${body} = {'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'password': 'senha123'}</msg>
 <var>${body}</var>
 <arg>name=Pedro Afonso</arg>
 <arg>email=pedro.teste@qa.com</arg>
 <arg>password=senha123</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="PASS" start="2025-06-29T05:01:19.696849" elapsed="0.000392"/>
+<status status="PASS" start="2025-06-30T18:04:12.671622" elapsed="0.000376"/>
 </kw>
 <kw name="POST" owner="RequestsLibrary">
-<msg time="2025-06-29T05:01:20.698155" level="INFO">POST Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/register 
+<msg time="2025-06-30T18:04:14.142872" level="INFO">POST Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/register 
  path_url=/api/v1/auth/register 
  headers={'User-Agent': 'python-requests/2.32.4', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '79', 'Content-Type': 'application/json'} 
  body=b'{"name": "Pedro Afonso", "email": "pedro.teste@qa.com", "password": "senha123"}' 
  </msg>
-<msg time="2025-06-29T05:01:20.698302" level="INFO">POST Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/register 
+<msg time="2025-06-30T18:04:14.143047" level="INFO">POST Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/register 
  status=201, reason=Created 
- headers={'Date': 'Sun, 29 Jun 2025 05:01:20 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"131-Xheb+VvvuQeecjBLZVREhARbpCc"', 'rndr-id': '91c4f87e-d58b-4db3', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '9572dd86697e0851-IAD', 'alt-svc': 'h3=":443"; ma=86400'} 
- body={"success":true,"data":{"_id":"6860c89fd56dec08414ec929","name":"Pedro Afonso","email":"pedro.teste@qa.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjODlmZDU2ZGVjMDg0MTRlYzkyOSIsImlhdCI6MTc1MTE3MzI4MCwiZXhwIjoxNzUxMjU5NjgwfQ.DU7mMH34GNpmE6Ko15KeHJRsdqGLjbf6K-IkL3sMgno"}} 
+ headers={'Date': 'Mon, 30 Jun 2025 18:04:14 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"131-v5ZBMhcKR7Uca1DMsv74Tx76Uwk"', 'rndr-id': '3a1dc73b-ab95-40ea', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '957f95b39be6e61d-IAD', 'alt-svc': 'h3=":443"; ma=86400'} 
+ body={"success":true,"data":{"_id":"6862d19d2efa1e0f043a0087","name":"Pedro Afonso","email":"pedro.teste@qa.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlkMmVmYTFlMGYwNDNhMDA4NyIsImlhdCI6MTc1MTMwNjY1NCwiZXhwIjoxNzUxMzkzMDU0fQ.EstYgkWUfL6QgvM_K7ZQPNfq0ELLnk1fF3zPhN1jCmU"}} 
  </msg>
-<msg time="2025-06-29T05:01:20.698458" level="INFO">${response} = &lt;Response [201]&gt;</msg>
+<msg time="2025-06-30T18:04:14.143190" level="INFO">${response} = &lt;Response [201]&gt;</msg>
 <var>${response}</var>
 <arg>${BASE_API_URL}/auth/register</arg>
 <arg>json=${body}</arg>
 <doc>Sends a POST request.</doc>
-<status status="PASS" start="2025-06-29T05:01:19.697361" elapsed="1.001128"/>
+<status status="PASS" start="2025-06-30T18:04:12.672118" elapsed="1.471106"/>
 </kw>
 <kw name="Set Suite Variable" owner="BuiltIn">
-<msg time="2025-06-29T05:01:20.699462" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [201]&gt;</msg>
+<msg time="2025-06-30T18:04:14.144182" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [201]&gt;</msg>
 <arg>${ULTIMA_RESPOSTA}</arg>
 <arg>${response}</arg>
 <doc>Makes a variable available everywhere within the scope of the current suite.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.698711" elapsed="0.000801"/>
+<status status="PASS" start="2025-06-30T18:04:14.143423" elapsed="0.000810"/>
 </kw>
 <return>
 <value>${response}</value>
-<status status="PASS" start="2025-06-29T05:01:20.699569" elapsed="0.000054"/>
+<status status="PASS" start="2025-06-30T18:04:14.144290" elapsed="0.000051"/>
 </return>
-<status status="PASS" start="2025-06-29T05:01:19.696436" elapsed="1.003308"/>
+<status status="PASS" start="2025-06-30T18:04:12.671214" elapsed="1.473246"/>
 </kw>
 <kw name="Validar Código de Status" owner="base">
 <kw name="Should Be Equal As Integers" owner="BuiltIn">
-<msg time="2025-06-29T05:01:20.700693" level="INFO">Argument types are:
+<msg time="2025-06-30T18:04:14.145422" level="INFO">Argument types are:
 &lt;class 'int'&gt;
 &lt;class 'str'&gt;</msg>
 <arg>${ULTIMA_RESPOSTA.status_code}</arg>
 <arg>${status_esperado}</arg>
 <doc>Fails if objects are unequal after converting them to integers.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.700256" elapsed="0.000502"/>
+<status status="PASS" start="2025-06-30T18:04:14.144973" elapsed="0.000520"/>
 </kw>
 <arg>201</arg>
-<status status="PASS" start="2025-06-29T05:01:20.699903" elapsed="0.000917"/>
+<status status="PASS" start="2025-06-30T18:04:14.144611" elapsed="0.000946"/>
 </kw>
 <kw name="Salvar Token De Autenticação" owner="setup_auth_keyword">
 <kw name="Convert To Dictionary" owner="Collections">
-<msg time="2025-06-29T05:01:20.701617" level="INFO">${json} = {'success': True, 'data': {'_id': '6860c89fd56dec08414ec929', 'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjODlm...</msg>
+<msg time="2025-06-30T18:04:14.146383" level="INFO">${json} = {'success': True, 'data': {'_id': '6862d19d2efa1e0f043a0087', 'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlk...</msg>
 <var>${json}</var>
 <arg>${ULTIMA_RESPOSTA.json()}</arg>
 <doc>Converts the given ``item`` to a Python ``dict`` type.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.701199" elapsed="0.000448"/>
+<status status="PASS" start="2025-06-30T18:04:14.145945" elapsed="0.000467"/>
 </kw>
 <kw name="Set Suite Variable" owner="BuiltIn">
-<msg time="2025-06-29T05:01:20.702662" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjODlmZDU2ZGVjMDg0MTRlYzkyOSIsImlhdCI6MTc1MTE3MzI4MCwiZXhwIjoxNzUxMjU5NjgwfQ.DU7mMH34GNpmE6Ko15KeHJRsdqGLjbf6K-IkL3sMgno</msg>
+<msg time="2025-06-30T18:04:14.147404" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlkMmVmYTFlMGYwNDNhMDA4NyIsImlhdCI6MTc1MTMwNjY1NCwiZXhwIjoxNzUxMzkzMDU0fQ.EstYgkWUfL6QgvM_K7ZQPNfq0ELLnk1fF3zPhN1jCmU</msg>
 <arg>${TOKEN}</arg>
 <arg>${json["data"]["token"]}</arg>
 <doc>Makes a variable available everywhere within the scope of the current suite.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.701770" elapsed="0.000942"/>
+<status status="PASS" start="2025-06-30T18:04:14.146529" elapsed="0.000923"/>
 </kw>
-<status status="PASS" start="2025-06-29T05:01:20.700957" elapsed="0.001816"/>
+<status status="PASS" start="2025-06-30T18:04:14.145694" elapsed="0.001818"/>
 </kw>
 <tag>API</tag>
 <tag>CT001</tag>
-<status status="PASS" start="2025-06-29T05:01:18.463886" elapsed="2.238993"/>
+<status status="PASS" start="2025-06-30T18:04:11.420866" elapsed="2.726745"/>
 </test>
 <test id="s1-s1-t2" name="Realizar Login com Credenciais Válidas" line="17">
 <kw name="Remover Usuário do Banco de Dados" owner="db_keywords">
-<msg time="2025-06-29T05:01:20.825325" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
-<msg time="2025-06-29T05:01:20.825405" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<msg time="2025-06-30T18:04:14.271183" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<msg time="2025-06-30T18:04:14.271265" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
 <arg>pedro.teste@qa.com</arg>
-<status status="PASS" start="2025-06-29T05:01:20.703601" elapsed="0.121869"/>
+<status status="PASS" start="2025-06-30T18:04:14.148314" elapsed="0.123012"/>
 </kw>
 <kw name="Inserir Usuário no Banco de Dados" owner="db_keywords">
-<msg time="2025-06-29T05:01:20.964676" level="INFO">${TEST_USER_EMAIL} = pedro.teste@qa.com</msg>
-<msg time="2025-06-29T05:01:20.965220" level="INFO">${TEST_USER_PASSWORD} = senha123</msg>
-<msg time="2025-06-29T05:01:20.965267" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6860c8a0c81fcb8e52f66847</msg>
-<msg time="2025-06-29T05:01:20.965314" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6860c8a0c81fcb8e52f66847</msg>
+<msg time="2025-06-30T18:04:14.411401" level="INFO">${TEST_USER_EMAIL} = pedro.teste@qa.com</msg>
+<msg time="2025-06-30T18:04:14.412098" level="INFO">${TEST_USER_PASSWORD} = senha123</msg>
+<msg time="2025-06-30T18:04:14.412141" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6862d19e4fdd9f682fac4128</msg>
+<msg time="2025-06-30T18:04:14.412181" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6862d19e4fdd9f682fac4128</msg>
 <arg>Pedro Afonso</arg>
 <arg>pedro.teste@qa.com</arg>
 <arg>senha123</arg>
-<status status="PASS" start="2025-06-29T05:01:20.825631" elapsed="0.139727"/>
+<status status="PASS" start="2025-06-30T18:04:14.271495" elapsed="0.140725"/>
 </kw>
 <kw name="Realizar Login" owner="setup_auth_keyword">
 <kw name="Create Dictionary" owner="BuiltIn">
-<msg time="2025-06-29T05:01:20.966185" level="INFO">${body} = {'email': 'pedro.teste@qa.com', 'password': 'senha123'}</msg>
+<msg time="2025-06-30T18:04:14.412939" level="INFO">${body} = {'email': 'pedro.teste@qa.com', 'password': 'senha123'}</msg>
 <var>${body}</var>
 <arg>email=${TEST_USER_EMAIL}</arg>
 <arg>password=${TEST_USER_PASSWORD}</arg>
 <doc>Creates and returns a dictionary based on the given ``items``.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.965865" elapsed="0.000348"/>
+<status status="PASS" start="2025-06-30T18:04:14.412636" elapsed="0.000331"/>
 </kw>
 <kw name="POST" owner="RequestsLibrary">
-<msg time="2025-06-29T05:01:21.514472" level="INFO">POST Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
+<msg time="2025-06-30T18:04:14.971325" level="INFO">POST Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
  path_url=/api/v1/auth/login 
  headers={'User-Agent': 'python-requests/2.32.4', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '55', 'Content-Type': 'application/json'} 
  body=b'{"email": "pedro.teste@qa.com", "password": "senha123"}' 
  </msg>
-<msg time="2025-06-29T05:01:21.514661" level="INFO">POST Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
+<msg time="2025-06-30T18:04:14.971458" level="INFO">POST Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
  status=200, reason=OK 
- headers={'Date': 'Sun, 29 Jun 2025 05:01:21 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"131-qAX2l20N0SNHpZWzLm1SQTveP4w"', 'rndr-id': '4504fe20-5032-4a0b', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '9572dd8e3e9c594a-IAD', 'Content-Encoding': 'gzip', 'alt-svc': 'h3=":443"; ma=86400'} 
- body={"success":true,"data":{"_id":"6860c8a0c81fcb8e52f66847","name":"Pedro Afonso","email":"pedro.teste@qa.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjOGEwYzgxZmNiOGU1MmY2Njg0NyIsImlhdCI6MTc1MTE3MzI4MSwiZXhwIjoxNzUxMjU5NjgxfQ.ZcpoqGQEqDjRHC1CyiK1poXjElll1oQNw4JpcyZzi04"}} 
+ headers={'Date': 'Mon, 30 Jun 2025 18:04:14 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"131-T52TBrzze2zwioT0wvtQuiYJ7Hw"', 'rndr-id': 'ea93482c-db9e-45ac', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '957f95be4942c56f-IAD', 'Content-Encoding': 'gzip', 'alt-svc': 'h3=":443"; ma=86400'} 
+ body={"success":true,"data":{"_id":"6862d19e4fdd9f682fac4128","name":"Pedro Afonso","email":"pedro.teste@qa.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTllNGZkZDlmNjgyZmFjNDEyOCIsImlhdCI6MTc1MTMwNjY1NCwiZXhwIjoxNzUxMzkzMDU0fQ.Oe-ZKZN7gkU3BHm3kCvLzQX5uzMEDZnLdPkoeXw5Pms"}} 
  </msg>
-<msg time="2025-06-29T05:01:21.514849" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<msg time="2025-06-30T18:04:14.971586" level="INFO">${response} = &lt;Response [200]&gt;</msg>
 <var>${response}</var>
 <arg>${BASE_API_URL}/auth/login</arg>
 <arg>json=${body}</arg>
 <doc>Sends a POST request.</doc>
-<status status="PASS" start="2025-06-29T05:01:20.966328" elapsed="0.548559"/>
+<status status="PASS" start="2025-06-30T18:04:14.413078" elapsed="0.558541"/>
 </kw>
 <kw name="Set Suite Variable" owner="BuiltIn">
-<msg time="2025-06-29T05:01:21.515427" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [200]&gt;</msg>
+<msg time="2025-06-30T18:04:14.972049" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [200]&gt;</msg>
 <arg>${ULTIMA_RESPOSTA}</arg>
 <arg>${response}</arg>
 <doc>Makes a variable available everywhere within the scope of the current suite.</doc>
-<status status="PASS" start="2025-06-29T05:01:21.515134" elapsed="0.000339"/>
+<status status="PASS" start="2025-06-30T18:04:14.971785" elapsed="0.000310"/>
 </kw>
 <return>
 <value>${response}</value>
-<status status="PASS" start="2025-06-29T05:01:21.515530" elapsed="0.000049"/>
+<status status="PASS" start="2025-06-30T18:04:14.972146" elapsed="0.000039"/>
 </return>
-<status status="PASS" start="2025-06-29T05:01:20.965573" elapsed="0.550117"/>
+<status status="PASS" start="2025-06-30T18:04:14.412388" elapsed="0.559896"/>
 </kw>
 <kw name="Validar Código de Status" owner="base">
 <kw name="Should Be Equal As Integers" owner="BuiltIn">
-<msg time="2025-06-29T05:01:21.516592" level="INFO">Argument types are:
+<msg time="2025-06-30T18:04:14.973102" level="INFO">Argument types are:
 &lt;class 'int'&gt;
 &lt;class 'str'&gt;</msg>
 <arg>${ULTIMA_RESPOSTA.status_code}</arg>
 <arg>${status_esperado}</arg>
 <doc>Fails if objects are unequal after converting them to integers.</doc>
-<status status="PASS" start="2025-06-29T05:01:21.516149" elapsed="0.000505"/>
+<status status="PASS" start="2025-06-30T18:04:14.972669" elapsed="0.000492"/>
 </kw>
 <arg>200</arg>
-<status status="PASS" start="2025-06-29T05:01:21.515848" elapsed="0.000868"/>
+<status status="PASS" start="2025-06-30T18:04:14.972419" elapsed="0.000802"/>
 </kw>
 <kw name="Salvar Token De Autenticação" owner="setup_auth_keyword">
 <kw name="Convert To Dictionary" owner="Collections">
-<msg time="2025-06-29T05:01:21.517541" level="INFO">${json} = {'success': True, 'data': {'_id': '6860c8a0c81fcb8e52f66847', 'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjOGEw...</msg>
+<msg time="2025-06-30T18:04:14.974019" level="INFO">${json} = {'success': True, 'data': {'_id': '6862d19e4fdd9f682fac4128', 'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTll...</msg>
 <var>${json}</var>
 <arg>${ULTIMA_RESPOSTA.json()}</arg>
 <doc>Converts the given ``item`` to a Python ``dict`` type.</doc>
-<status status="PASS" start="2025-06-29T05:01:21.517082" elapsed="0.000488"/>
+<status status="PASS" start="2025-06-30T18:04:14.973569" elapsed="0.000480"/>
 </kw>
 <kw name="Set Suite Variable" owner="BuiltIn">
-<msg time="2025-06-29T05:01:21.518149" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjBjOGEwYzgxZmNiOGU1MmY2Njg0NyIsImlhdCI6MTc1MTE3MzI4MSwiZXhwIjoxNzUxMjU5NjgxfQ.ZcpoqGQEqDjRHC1CyiK1poXjElll1oQNw4JpcyZzi04</msg>
+<msg time="2025-06-30T18:04:14.974608" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTllNGZkZDlmNjgyZmFjNDEyOCIsImlhdCI6MTc1MTMwNjY1NCwiZXhwIjoxNzUxMzkzMDU0fQ.Oe-ZKZN7gkU3BHm3kCvLzQX5uzMEDZnLdPkoeXw5Pms</msg>
 <arg>${TOKEN}</arg>
 <arg>${json["data"]["token"]}</arg>
 <doc>Makes a variable available everywhere within the scope of the current suite.</doc>
-<status status="PASS" start="2025-06-29T05:01:21.517687" elapsed="0.000510"/>
+<status status="PASS" start="2025-06-30T18:04:14.974162" elapsed="0.000492"/>
 </kw>
-<status status="PASS" start="2025-06-29T05:01:21.516858" elapsed="0.001399"/>
+<status status="PASS" start="2025-06-30T18:04:14.973351" elapsed="0.001362"/>
 </kw>
 <tag>API</tag>
-<tag>CT002</tag>
-<status status="PASS" start="2025-06-29T05:01:20.703159" elapsed="0.815203"/>
+<tag>CT005</tag>
+<status status="PASS" start="2025-06-30T18:04:14.147864" elapsed="0.826943"/>
+</test>
+<test id="s1-s1-t3" name="Acessar Rota Protegida Após Logout" line="25">
+<kw name="Remover Usuário do Banco de Dados" owner="db_keywords">
+<msg time="2025-06-30T18:04:15.098248" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<msg time="2025-06-30T18:04:15.098319" level="INFO">🧹 Usuário(s) com email 'pedro.teste@qa.com' removido(s): 1</msg>
+<arg>pedro.teste@qa.com</arg>
+<status status="PASS" start="2025-06-30T18:04:14.975458" elapsed="0.122918"/>
+</kw>
+<kw name="Inserir Usuário no Banco de Dados" owner="db_keywords">
+<msg time="2025-06-30T18:04:15.238022" level="INFO">${TEST_USER_EMAIL} = pedro.teste@qa.com</msg>
+<msg time="2025-06-30T18:04:15.238205" level="INFO">${TEST_USER_PASSWORD} = senha123</msg>
+<msg time="2025-06-30T18:04:15.238260" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6862d19f4fdd9f682fac4129</msg>
+<msg time="2025-06-30T18:04:15.238313" level="INFO">✅ Usuário 'pedro.teste@qa.com' inserido com ID: 6862d19f4fdd9f682fac4129</msg>
+<arg>Pedro Afonso</arg>
+<arg>pedro.teste@qa.com</arg>
+<arg>senha123</arg>
+<status status="PASS" start="2025-06-30T18:04:15.098520" elapsed="0.139846"/>
+</kw>
+<kw name="Realizar Login" owner="setup_auth_keyword">
+<kw name="Create Dictionary" owner="BuiltIn">
+<msg time="2025-06-30T18:04:15.239112" level="INFO">${body} = {'email': 'pedro.teste@qa.com', 'password': 'senha123'}</msg>
+<var>${body}</var>
+<arg>email=${TEST_USER_EMAIL}</arg>
+<arg>password=${TEST_USER_PASSWORD}</arg>
+<doc>Creates and returns a dictionary based on the given ``items``.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.238811" elapsed="0.000329"/>
+</kw>
+<kw name="POST" owner="RequestsLibrary">
+<msg time="2025-06-30T18:04:15.854688" level="INFO">POST Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
+ path_url=/api/v1/auth/login 
+ headers={'User-Agent': 'python-requests/2.32.4', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive', 'Content-Length': '55', 'Content-Type': 'application/json'} 
+ body=b'{"email": "pedro.teste@qa.com", "password": "senha123"}' 
+ </msg>
+<msg time="2025-06-30T18:04:15.854790" level="INFO">POST Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/auth/login 
+ status=200, reason=OK 
+ headers={'Date': 'Mon, 30 Jun 2025 18:04:15 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"131-vLtstgk4Mmdvq9AAcS9MsZM2oKQ"', 'rndr-id': '5193fec3-93bb-4c70', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '957f95c36f601315-IAD', 'Content-Encoding': 'gzip', 'alt-svc': 'h3=":443"; ma=86400'} 
+ body={"success":true,"data":{"_id":"6862d19f4fdd9f682fac4129","name":"Pedro Afonso","email":"pedro.teste@qa.com","role":"user","token":"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlmNGZkZDlmNjgyZmFjNDEyOSIsImlhdCI6MTc1MTMwNjY1NSwiZXhwIjoxNzUxMzkzMDU1fQ.2mVjO94DJuBCeGIV0wzJXWeQPe37EtzHDMnJv0eue4s"}} 
+ </msg>
+<msg time="2025-06-30T18:04:15.854957" level="INFO">${response} = &lt;Response [200]&gt;</msg>
+<var>${response}</var>
+<arg>${BASE_API_URL}/auth/login</arg>
+<arg>json=${body}</arg>
+<doc>Sends a POST request.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.239252" elapsed="0.615736"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-30T18:04:15.855598" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [200]&gt;</msg>
+<arg>${ULTIMA_RESPOSTA}</arg>
+<arg>${response}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.855197" elapsed="0.000450"/>
+</kw>
+<return>
+<value>${response}</value>
+<status status="PASS" start="2025-06-30T18:04:15.855711" elapsed="0.000046"/>
+</return>
+<status status="PASS" start="2025-06-30T18:04:15.238558" elapsed="0.617339"/>
+</kw>
+<kw name="Validar Código de Status" owner="base">
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-30T18:04:15.856847" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ULTIMA_RESPOSTA.status_code}</arg>
+<arg>${status_esperado}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.856391" elapsed="0.000543"/>
+</kw>
+<arg>200</arg>
+<status status="PASS" start="2025-06-30T18:04:15.856064" elapsed="0.000933"/>
+</kw>
+<kw name="Salvar Token De Autenticação" owner="setup_auth_keyword">
+<kw name="Convert To Dictionary" owner="Collections">
+<msg time="2025-06-30T18:04:15.857828" level="INFO">${json} = {'success': True, 'data': {'_id': '6862d19f4fdd9f682fac4129', 'name': 'Pedro Afonso', 'email': 'pedro.teste@qa.com', 'role': 'user', 'token': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlm...</msg>
+<var>${json}</var>
+<arg>${ULTIMA_RESPOSTA.json()}</arg>
+<doc>Converts the given ``item`` to a Python ``dict`` type.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.857355" elapsed="0.000502"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-30T18:04:15.858466" level="INFO">${TOKEN} = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY4NjJkMTlmNGZkZDlmNjgyZmFjNDEyOSIsImlhdCI6MTc1MTMwNjY1NSwiZXhwIjoxNzUxMzkzMDU1fQ.2mVjO94DJuBCeGIV0wzJXWeQPe37EtzHDMnJv0eue4s</msg>
+<arg>${TOKEN}</arg>
+<arg>${json["data"]["token"]}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.858007" elapsed="0.000505"/>
+</kw>
+<status status="PASS" start="2025-06-30T18:04:15.857131" elapsed="0.001470"/>
+</kw>
+<kw name="Simular Logout (Descarta o Token)" owner="setup_auth_keyword">
+<kw name="GET" owner="RequestsLibrary">
+<msg time="2025-06-30T18:04:16.160507" level="INFO">GET Request : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/reservations/me 
+ path_url=/api/v1/reservations/me 
+ headers={'User-Agent': 'python-requests/2.32.4', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'} 
+ body=None 
+ </msg>
+<msg time="2025-06-30T18:04:16.160606" level="INFO">GET Response : url=https://cinema-challenge-back-xelh.onrender.com/api/v1/reservations/me 
+ status=401, reason=Unauthorized 
+ headers={'Date': 'Mon, 30 Jun 2025 18:04:16 GMT', 'Content-Type': 'application/json; charset=utf-8', 'Transfer-Encoding': 'chunked', 'Connection': 'keep-alive', 'access-control-allow-origin': '*', 'etag': 'W/"41-TJq3LYiwj1On+7IZ17oLU5tM1Zs"', 'rndr-id': '2b9b4d0f-1947-4975', 'vary': 'Accept-Encoding', 'x-powered-by': 'Express', 'x-render-origin-server': 'Render', 'cf-cache-status': 'DYNAMIC', 'Server': 'cloudflare', 'CF-RAY': '957f95c74bd220be-IAD', 'alt-svc': 'h3=":443"; ma=86400'} 
+ body={"success":false,"message":"Not authorized to access this route"} 
+ </msg>
+<msg time="2025-06-30T18:04:16.160738" level="INFO">${response} = &lt;Response [401]&gt;</msg>
+<var>${response}</var>
+<arg>${BASE_API_URL}/reservations/me</arg>
+<arg>expected_status=any</arg>
+<doc>Sends a GET request.</doc>
+<status status="PASS" start="2025-06-30T18:04:15.858985" elapsed="0.301790"/>
+</kw>
+<kw name="Set Suite Variable" owner="BuiltIn">
+<msg time="2025-06-30T18:04:16.161236" level="INFO">${ULTIMA_RESPOSTA} = &lt;Response [401]&gt;</msg>
+<arg>${ULTIMA_RESPOSTA}</arg>
+<arg>${response}</arg>
+<doc>Makes a variable available everywhere within the scope of the current suite.</doc>
+<status status="PASS" start="2025-06-30T18:04:16.160976" elapsed="0.000304"/>
+</kw>
+<status status="PASS" start="2025-06-30T18:04:15.858745" elapsed="0.302595"/>
+</kw>
+<kw name="Validar Código de Status" owner="base">
+<kw name="Should Be Equal As Integers" owner="BuiltIn">
+<msg time="2025-06-30T18:04:16.162162" level="INFO">Argument types are:
+&lt;class 'int'&gt;
+&lt;class 'str'&gt;</msg>
+<arg>${ULTIMA_RESPOSTA.status_code}</arg>
+<arg>${status_esperado}</arg>
+<doc>Fails if objects are unequal after converting them to integers.</doc>
+<status status="PASS" start="2025-06-30T18:04:16.161721" elapsed="0.000507"/>
+</kw>
+<arg>401</arg>
+<status status="PASS" start="2025-06-30T18:04:16.161466" elapsed="0.000824"/>
+</kw>
+<tag>API</tag>
+<tag>CT009</tag>
+<status status="PASS" start="2025-06-30T18:04:14.975057" elapsed="1.187342"/>
 </test>
 <doc>Testes para o Endpoint de Autenticação</doc>
-<status status="PASS" start="2025-06-29T05:01:17.979438" elapsed="3.539464"/>
+<status status="PASS" start="2025-06-30T18:04:10.975866" elapsed="5.187075"/>
 </suite>
-<status status="PASS" start="2025-06-29T05:01:17.960027" elapsed="3.559760"/>
+<status status="PASS" start="2025-06-30T18:04:10.956444" elapsed="5.207146"/>
 </suite>
 <statistics>
 <total>
-<stat pass="2" fail="0" skip="0">All Tests</stat>
+<stat pass="3" fail="0" skip="0">All Tests</stat>
 </total>
 <tag>
-<stat pass="2" fail="0" skip="0">API</stat>
+<stat pass="3" fail="0" skip="0">API</stat>
 <stat pass="1" fail="0" skip="0">CT001</stat>
-<stat pass="1" fail="0" skip="0">CT002</stat>
+<stat pass="1" fail="0" skip="0">CT005</stat>
+<stat pass="1" fail="0" skip="0">CT009</stat>
 </tag>
 <suite>
-<stat name="Tests" id="s1" pass="2" fail="0" skip="0">Tests</stat>
-<stat name="Setup Auth Test" id="s1-s1" pass="2" fail="0" skip="0">Tests.Setup Auth Test</stat>
+<stat name="Tests" id="s1" pass="3" fail="0" skip="0">Tests</stat>
+<stat name="Setup Auth Test" id="s1-s1" pass="3" fail="0" skip="0">Tests.Setup Auth Test</stat>
 </suite>
 </statistics>
 <errors>
