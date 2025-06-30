@@ -1,6 +1,6 @@
 # Ficheiros de log e relatório gerados pelo Robot Framework
 /cinema-automation/logs/
-/logs/
+/cinema-automation/utils/__pycache__
 
 # Ficheiros de cache do Python
 **/__pycache__/
