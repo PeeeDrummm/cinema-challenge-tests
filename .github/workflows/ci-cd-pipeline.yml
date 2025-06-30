@@ -10,9 +10,10 @@ permissions:
   pull-requests: write
 
 jobs:
-  test-and-create-pr:
-    name: Test, Update README & Auto-merge
+  test-and-manage-pr:
+    name: Test, Upload Logs, Update README & Sync Branches
     runs-on: ubuntu-22.04
+
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
@@ -32,13 +33,19 @@ jobs:
           pip install pytz
 
       - name: Install Playwright dependencies
-        run: python -m playwright install-deps && python -m playwright install
+        run: |
+          python -m playwright install-deps
+          python -m playwright install
 
       - name: Run Robot Framework tests
         working-directory: ./cinema-automation
         run: robot --outputdir logs tests/
 
-      # ← só chega aqui se os testes PASSAREM
+      - name: Upload test logs
+        uses: actions/upload-artifact@v3
+        with:
+          name: robot-logs
+          path: cinema-automation/logs/
 
       - name: Update README.md with test results
         run: python update_readme.py
@@ -52,15 +59,26 @@ jobs:
           branch: develop
           base: main
           commit-message: "docs: 🤖 Atualiza README e código na main [skip ci]"
-          title: "🚀 [Automated] Merge develop into main"
+          title: "🚀 Merge develop into main"
           body: |
-            ✅ Testes passaram.  
+            ✅ Testes passaram.
             📊 README e código prontos para a main.
 
       - name: Auto-merge PR for Owner
         if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
-          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
         run: |
-          gh pr merge "$PR_URL" --squash
+          gh pr merge "${{ steps.cpr.outputs.pull-request-url }}" --squash
+
+      - name: Sync develop with main
+        if: success() && github.actor == 'PeeeDrummm'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git checkout develop
+          git merge origin/main --no-ff -m "chore: sync develop with main [skip ci]"
+          git push origin develop
