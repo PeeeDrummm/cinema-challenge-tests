@@ -28,7 +28,13 @@ jobs:
 
       - name: 🧪 Executa os Testes Robot
         run: |
-          robot --nostatusrc -d cinema-automation/logs tests/
+          mkdir -p cinema-automation/logs
+          robot \
+            --output cinema-automation/logs/output.xml \
+            --log cinema-automation/logs/log.html \
+            --report cinema-automation/logs/report.html \
+            cinema-automation/tests || true
+        continue-on-error: true
 
       - name: 🧠 Atualiza README.md com Resultados
         run: |
@@ -42,10 +48,11 @@ jobs:
           path: cinema-automation/logs/
 
       - name: 🚨 Interrompe se houver Falha nos Testes
-        if: failure()
         run: |
-          echo "❌ Alguns testes falharam. O PR não será criado."
-          exit 1
+          grep -q 'status="FAIL"' cinema-automation/logs/output.xml && {
+            echo "❌ Alguns testes falharam. O PR não será criado.";
+            exit 1;
+          } || echo "✅ Todos os testes passaram. Continuando..."
 
       - name: 🤖 Cria PR da develop para main
         uses: peter-evans/create-pull-request@v6
@@ -66,3 +73,4 @@ jobs:
           mergeMethod: squash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
