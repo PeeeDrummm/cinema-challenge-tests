@@ -6,15 +6,30 @@ Resource        ./base.resource
 *** Keywords ***
 Registrar um Novo Usuário
     # Monta o corpo com dados fixos para o registro
-    ${body}=    Create Dictionary
-    ...         name=Pedro Afonso
-    ...         email=pedro.teste@qa.com
-    ...         password=senha123
+    [Arguments]     ${nome}    ${email}    ${senha}    ${status_esperado}
+    ${body}=        Create Dictionary
+    ...             name=${nome}
+    ...             email=${email}
+    ...             password=${senha}
+
+    # Resultado esperado da requisição = valido: 200 e 201 / invalido: >= 400
+    ${response}=    Run Keyword If                   '${status_esperado}' == 'sucesso'
+    ...    POST     ${BASE_API_URL}/auth/register    json=${body}
+    ...    ELSE
+    ...    POST     ${BASE_API_URL}/auth/register    json=${body}    expected_status=any
+
+    Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
+    RETURN    ${response}
+
+    # ${body}=    Create Dictionary
+    # ...         name=Pedro Afonso
+    # ...         email=pedro.teste@qa.com
+    # ...         password=senha123
     
-    # Executa o POST e salva a última resposta na suíte
-    ${response}=    POST           ${BASE_API_URL}/auth/register    json=${body}
-    Set Suite Variable             ${ULTIMA_RESPOSTA}               ${response}
-    RETURN                         ${response}
+    # # Executa o POST e salva a última resposta na suíte
+    # ${response}=    POST           ${BASE_API_URL}/auth/register    json=${body}
+    # Set Suite Variable             ${ULTIMA_RESPOSTA}               ${response}
+    # RETURN                         ${response}
 
 Realizar Login
     # Monta o corpo com dados fixos para o registro

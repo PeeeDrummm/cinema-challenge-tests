@@ -10,7 +10,7 @@ Suite Setup    Criar Sessão API
 Criar um novo usuário com dados válidos e únicos
     [Tags]    API    CT001
     Remover Usuário do Banco de Dados    pedro.teste@qa.com
-    Registrar um Novo Usuário
+    Registrar um Novo Usuário    Pedro Afonso    pedro.teste@qa.com    senha123    valido
     Validar Código de Status    201
     Salvar Token de Autenticação
 
