@@ -1,3 +1,4 @@
+
 name: CI/CD - Cinema Challenge Tests
 
 on:
@@ -11,7 +12,11 @@ permissions:
 
 jobs:
   test-and-manage-pr:
-    name: Test, Upload Logs, Update README & Sync Branches
+    name: Test, Update README, and Manage PR
+    
+    # Lógica anti-loop: não roda se o commit foi feito pelo bot
+    if: "!contains(github.event.head_commit.message, '[skip ci]')"
+
     runs-on: ubuntu-22.04
 
     env:
@@ -22,63 +27,56 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
+      # --- ETAPA 1: EXECUÇÃO DOS TESTES ---
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install dependencies
+      - name: Install Python dependencies
         run: |
           pip install -r cinema-automation/requirements.txt
           pip install pytz
+      
+      - name: Install Playwright system dependencies
+        run: python -m playwright install-deps
 
-      - name: Install Playwright dependencies
-        run: |
-          python -m playwright install-deps
-          python -m playwright install
+      - name: Install Playwright browsers
+        run: python -m playwright install
 
       - name: Run Robot Framework tests
         working-directory: ./cinema-automation
         run: robot --outputdir logs tests/
 
-      - name: Upload test logs
-        uses: actions/upload-artifact@v4
-        with:
-          name: robot-logs
-          path: cinema-automation/logs/
-
+      # --- ETAPA 2: ATUALIZAÇÃO DO README ---
       - name: Update README.md with test results
         run: python update_readme.py
-        continue-on-error: true
+        continue-on-error: true 
 
-      - name: Create Pull Request to main
+      # --- ETAPA 3: COMMIT E CRIAÇÃO DO PULL REQUEST ---
+      - name: Create Pull Request with updated README
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           token: ${{ secrets.PAT }}
+          # Adicionamos a etiqueta '[skip ci]' para evitar o loop
+          commit-message: "docs: 🤖 Atualiza README com os últimos resultados dos testes [skip ci]"
           branch: develop
           base: main
-          commit-message: "docs: 🤖 Atualiza README e código na main [skip ci]"
-          title: "🚀 Merge develop into main"
+          title: "🔁 [Automated] Merge develop into main"
           body: |
-            ✅ Testes passaram.
-            📊 README e código prontos para a main.
-
-      - name: Auto-merge PR for Owner
+            ✅ Testes automatizados passaram com sucesso.
+            📊 README atualizado com os resultados.
+            Este PR foi gerado automaticamente.
+      # --- ETAPA 4: MERGE DIRETO (SE VOCÊ FOR O AUTOR) ---
+      - name: Merge Pull Request for Owner
+        # Este passo só roda se um PR foi criado ou atualizado
+        # E se o autor do push original for você.
         if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
         env:
           GITHUB_TOKEN: ${{ secrets.PAT }}
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
         run: |
-          gh pr merge "${{ steps.cpr.outputs.pull-request-url }}" --squash
-
-      - name: Sync develop with main
-        if: success() && github.actor == 'PeeeDrummm'
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git fetch origin main
-          git checkout develop
-          git merge origin/main --no-ff -m "chore: sync develop with main [skip ci]"
-          git push origin develop
+          echo "Workflow initiated by repository owner. Merging PR #${{ steps.cpr.outputs.pull-request-number }}"
+          # A CORREÇÃO FINAL: Comando de merge direto, sem '--auto' e sem '--delete-branch'
+          gh pr merge "$PR_URL" --squash
