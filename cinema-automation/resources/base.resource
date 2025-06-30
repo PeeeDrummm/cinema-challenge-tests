@@ -19,3 +19,9 @@ Validar Código de Status
     [Arguments]                    ${status_esperado}
     # Compara o status da última resposta com o esperado
     Should Be Equal As Integers    ${ULTIMA_RESPOSTA.status_code}    ${status_esperado}
+
+Validar Mensagem Response
+    # Valida a Mensagem de Retorno
+    [Arguments]        ${mensagem_esperada}
+    ${mensagem}=       Set Variable            ${ULTIMA_RESPOSTA.json()['message']}
+    Should Be Equal    ${mensagem}             ${mensagem_esperada}

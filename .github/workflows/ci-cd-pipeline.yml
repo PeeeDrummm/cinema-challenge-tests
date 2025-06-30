@@ -1,0 +1,66 @@
+name: CI/CD - Cinema Challenge Tests
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  test-and-create-pr:
+    name: Test, Update README & Auto-merge
+    runs-on: ubuntu-22.04
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.10'
+
+      - name: Install dependencies
+        run: |
+          pip install -r cinema-automation/requirements.txt
+          pip install pytz
+
+      - name: Install Playwright dependencies
+        run: python -m playwright install-deps && python -m playwright install
+
+      - name: Run Robot Framework tests
+        working-directory: ./cinema-automation
+        run: robot --outputdir logs tests/
+
+      # ← só chega aqui se os testes PASSAREM
+
+      - name: Update README.md with test results
+        run: python update_readme.py
+        continue-on-error: true
+
+      - name: Create Pull Request to main
+        id: cpr
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.PAT }}
+          branch: develop
+          base: main
+          commit-message: "docs: 🤖 Atualiza README e código na main [skip ci]"
+          title: "🚀 [Automated] Merge develop into main"
+          body: |
+            ✅ Testes passaram.  
+            📊 README e código prontos para a main.
+
+      - name: Auto-merge PR for Owner
+        if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
+        env:
+          GITHUB_TOKEN: ${{ secrets.PAT }}
+          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+        run: |
+          gh pr merge "$PR_URL" --squash
