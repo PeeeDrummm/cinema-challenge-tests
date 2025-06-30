@@ -10,7 +10,7 @@ Este projeto contém testes automatizados funcionais para a aplicação Cinema C
 | :---: | :---: | :---: | :---: |
 | ![Status](https://img.shields.io/badge/Status-PASSOU-green?style=for-the-badge) | **4** | **4** | **0** |
 
-*Última execução: `30/06/2025 às 19:19:44 (-03)`*
+*Última execução: `30/06/2025 às 19:28:10 (-03)`*
 
 ➡️ *[Clique aqui para ver o relatório detalhado na aba Actions](https://github.com/PeeeDrummm/cinema-challenge-tests/actions)*
 
