@@ -59,7 +59,7 @@ jobs:
       - name: 🤖 Cria PR da develop para main
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PAT }}
           commit-message: "docs: 🤖 Atualiza README e testes [skip ci]"
           title: "Merge Automático: develop ➡️ main"
           body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
@@ -75,4 +75,4 @@ jobs:
         with:
           mergeMethod: squash
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.PAT }}
