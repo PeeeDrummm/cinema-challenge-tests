@@ -9,7 +9,7 @@ jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
 
-    env: 
+    env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
@@ -64,8 +64,9 @@ jobs:
           title: "Merge Automático: develop ➡️ main"
           body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
           base: main
-          branch: develop
-          delete-branch: false
+          branch: pr-develop-to-main
+          branch-suffix: timestamp
+          delete-branch: true
           draft: false
           labels: automerge
 
