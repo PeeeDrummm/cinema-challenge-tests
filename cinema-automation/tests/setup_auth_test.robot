@@ -23,7 +23,7 @@ Realizar Login com Credenciais Válidas
     Salvar Token de Autenticação
 
 Acessar Rota Protegida Após Logout
-    [Tags]    API    CT009
+    [Tags]    API    CT009    TPPS
     Remover Usuário do Banco de Dados    pedro.teste@qa.com
     Inserir Usuário no Banco de Dados    Pedro Afonso    pedro.teste@qa.com    senha123
     Realizar Login
