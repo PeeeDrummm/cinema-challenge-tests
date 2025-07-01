@@ -12,6 +12,14 @@ Criar Usuário Com E-mail Existente
     [Tags]    API    CT002
     Remover Usuário do Banco de Dados    pedro.teste@qa.com
     Inserir Usuário no Banco de Dados    Pedro Afonso    pedro.teste@qa.com    senha123
-    Registrar um Novo Usuário    Pedro Afonso    pedro.teste@qa.com    senha123    invalido
-    Validar Código de Status     400
-    Validar Mensagem Response    User already exists
+    Registrar um Novo Usuário            Pedro Afonso    pedro.teste@qa.com    senha123    invalido
+    Validar Código de Status             400
+    Validar Mensagem Response            User already exists
+
+Login Com Senha Incorreta
+    [Tags]    API    CT006
+    Remover Usuário do Banco de Dados    pedro.teste@qa.com
+    Inserir Usuário no Banco de Dados    Pedro Afonso    pedro.teste@qa.com    senha123
+    Realizar Login Com Senha Incorreta
+    Validar Código de Status     401
+    Validar Mensagem Response    Invalid email or password
