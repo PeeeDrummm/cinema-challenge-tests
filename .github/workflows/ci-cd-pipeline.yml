@@ -1,1 +1,54 @@
-...
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  actions: write
+
+jobs:
+  test-and-upload-logs:
+    name: 🧪 Test and Upload Logs
+    runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+
+    steps:
+      # 1) Checkout completo
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # 2) Configura Python
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      # 3) Instala dependências
+      - name: 📦 Install dependencies
+        run: |
+          pip install -r cinema-automation/requirements.txt
+          python -m playwright install-deps
+          python -m playwright install
+
+      # 4) Executa testes Robot (gera logs mesmo se falhar)
+      - name: 🧪 Run Robot Framework tests
+        working-directory: ./cinema-automation
+        run: |
+          mkdir -p logs
+          robot --outputdir logs tests/
+        continue-on-error: true
+
+      # 5) Upload dos logs como artefato
+      - name: 📤 Upload logs artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-logs
+          path: cinema-automation/logs/
