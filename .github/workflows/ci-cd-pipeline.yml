@@ -1,4 +1,3 @@
-# .github/workflows/ci-cd-pipeline.yml
 name: CI/CD Pipeline
 
 on:
@@ -13,91 +12,85 @@ jobs:
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
-      - name: 📥 Checkout completo (todas as branches)
+      # 1) Faz checkout completo usando seu PAT para permitir pushes
+      - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          token: ${{ secrets.PAT }}
 
-      - name: 🐍 Configura Python 3.11
+      # 2) Python 3.11
+      - name: 🐍 Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
+      # 3) Dependências Robot + Browser
       - name: 📦 Instala Dependências
         run: |
           pip install -r cinema-automation/requirements.txt
           pip install robotframework robotframework-browser
           rfbrowser init
 
-      - name: 🛠️ Prepara pasta de logs
-        run: mkdir -p cinema-automation/logs
-
-      - name: 🧪 Executa Testes Robot (continua mesmo se falhar)
+      # 4) Executa os testes (sempre gera output.xml mesmo se falhar)
+      - name: 🧪 Run Robot Tests
         run: |
+          mkdir -p cinema-automation/logs
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
             --report cinema-automation/logs/report.html \
-            cinema-automation/tests
+            cinema-automation/tests || true
         continue-on-error: true
 
-      - name: 🧠 Atualiza README.md com resultados
+      # 5) Atualiza o README com o resultado dos testes
+      - name: 🧠 Update README.md
         run: python update_readme.py
 
-      - name: 📝 Commit do README.md atualizado
+      # 6) Comita e empurra o README atualizado em develop (skip ci)
+      - name: 📝 Commit & Push README
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
-          # só comita se houver mudança
-          git diff --cached --quiet || git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
+            git push origin develop
+          else
+            echo "✅ Nenhuma mudança no README"
+          fi
 
-      - name: 💾 Salva logs como artefato
+      # 7) Salva os logs como artefato
+      - name: 💾 Upload Logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Encerra se algum teste falhou
+      # 8) Cancela se algum teste falhou
+      - name: 🚨 Abort if Tests Failed
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "❌ Testes falharam. PR não será criado."
+            echo "❌ Testes falharam. Interrompendo pipeline."
             exit 1
           fi
 
-      - name: 🏗️ Prepara branch de merge (main ← develop)
+      # 9) Cria e faz merge do PR diretamente com o GH CLI
+      - name: 🤖 Create & Merge PR
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
         run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Puxa main e develop
-          git fetch origin main
-          git fetch origin develop
-          # Cria branch nova a partir de main
-          git checkout origin/main -b pr-develop-to-main-${{ github.run_id }}
-          # Faz merge completo da develop
-          git merge --no-ff origin/develop -m "Merge develop ➡️ main [skip ci]"
-          # Empurra a branch de PR usando seu PAT
-          git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} HEAD:pr-develop-to-main-${{ github.run_id }}
+          # Autentica o gh CLI
+          echo "${GH_TOKEN}" | gh auth login --with-token
+          # Se ainda não existe PR aberta de develop→main, crie uma
+          if ! gh pr list --state open --base main --head develop | grep -q develop; then
+            gh pr create \
+              --title "Merge Automático: develop ➡️ main" \
+              --body "Este PR foi criado automaticamente após os testes passarem com sucesso." \
+              --base main --head develop \
+              --label automerge
+          fi
+          # Agora auto-merge com squash e delete branch
+          gh pr merge develop --auto --squash --delete-branch
         shell: bash
-
-      - name: 🤖 Cria PR de pr-develop-to-main → main
-        id: create_pr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.PAT }}
-          commit-message: "chore: merge develop ➡️ main [skip ci]"
-          title: "Merge Automático: develop ➡️ main"
-          body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
-          base: main
-          branch: pr-develop-to-main-${{ github.run_id }}
-          delete-branch: true
-          draft: false
-          labels: automerge
-
-      - name: 🔄 Habilita Auto-Merge no PR
-        uses: peter-evans/enable-pull-request-automerge@v2
-        with:
-          token: ${{ secrets.PAT }}
-          pull-request: ${{ steps.create_pr.outputs.pull-request-number }}
-          merge-method: squash
