@@ -1,3 +1,4 @@
+# .github/workflows/ci-cd-pipeline.yml
 name: CI/CD - Cinema Challenge Tests
 
 on:
@@ -12,20 +13,21 @@ permissions:
 jobs:
   test-and-manage-pr:
     name: Test, Update README and Merge
-    # não roda se o commit tiver [skip ci]
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-22.04
 
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
+      GH_TOKEN: ${{ secrets.PAT }}
 
     steps:
-      # 1) Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
 
-      # 2) Python & dependências
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
@@ -36,44 +38,54 @@ jobs:
           pip install -r cinema-automation/requirements.txt
           pip install pytz
 
-      # 3) Playwright
-      - name: Install Playwright system dependencies
-        run: python -m playwright install-deps
+      - name: Install Playwright deps & browsers
+        run: |
+          python -m playwright install-deps
+          python -m playwright install
 
-      - name: Install Playwright browsers
-        run: python -m playwright install
-
-      # 4) Executa Robot
       - name: Run Robot Framework tests
         working-directory: ./cinema-automation
         run: robot --outputdir logs tests/
-
-      # 5) Atualiza README
-      - name: Update README.md with test results
-        run: python update_readme.py
         continue-on-error: true
 
-      # 6) Cria PR (e commita o README atualizado em develop)
-      - name: Create Pull Request with updated README
-        id: cpr
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.PAT }}
-          commit-message: "docs: 🤖 Atualiza README com os últimos resultados dos testes [skip ci]"
-          branch: develop
-          base: main
-          title: "🔁 [Automated] Merge develop into main"
-          body: |
-            ✅ Testes automatizados passaram com sucesso.
-            📊 README atualizado com os resultados.
-            Este PR foi gerado automaticamente.
+      - name: Update README.md with test results
+        run: python update_readme.py
 
-      # 7) Faz merge se for você quem disparou
-      - name: Merge Pull Request for Owner
-        if: steps.cpr.outputs.pull-request-operation != 'none' && github.actor == 'PeeeDrummm'
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
-          PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
+      - name: Commit & Push README.md
         run: |
-          echo "Merging PR #${{ steps.cpr.outputs.pull-request-number }}..."
-          gh pr merge "$PR_URL" --squash --delete-branch --yes
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          if ! git diff --cached --quiet; then
+            git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
+            git push origin develop
+          fi
+
+      - name: Upload Robot logs
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-logs
+          path: cinema-automation/logs/
+
+      - name: Abort if tests failed
+        run: |
+          if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
+            echo "❌ Testes falharam. Encerrando."
+            exit 1
+          fi
+
+      - name: Create & Merge PR via GH CLI
+        shell: bash
+        run: |
+          # cria PR develop→main se não existir
+          if ! gh pr list --state open --base main --head develop | grep -q develop; then
+            gh pr create \
+              --title "Merge Automático: develop ➡️ main" \
+              --body "✅ Testes passaram e README atualizado." \
+              --base main --head develop \
+              --label automerge
+          fi
+          # captura o PR e faz squash + delete usando auto-merge
+          PR_NUM=$(gh pr list --state open --base main --head develop --json number -q '.[0].number')
+          gh pr merge "$PR_NUM" --squash --delete-branch --auto
