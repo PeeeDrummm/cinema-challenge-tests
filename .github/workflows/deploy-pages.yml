@@ -15,24 +15,29 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      # Checkout leve para baixar workflow metadata
       - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
+      # Baixa o artefato de logs gerado pelo CI
       - name: ⬇️ Download logs artifact
-        uses: actions/download-artifact@v4   # <— ATUALIZADO para v4
+        uses: actions/download-artifact@v4
         with:
           name: robot-logs
           path: public
 
+      # Configura GitHub Pages
       - name: ⚙️ Configure Pages
         uses: actions/configure-pages@v3
 
+      # Empacota os arquivos em public/
       - name: 📦 Upload Pages artifact
         uses: actions/upload-pages-artifact@v1
         with:
           path: public
 
+      # Publica em gh-pages
       - name: 📢 Publish to GitHub Pages
         uses: actions/deploy-pages@v1
