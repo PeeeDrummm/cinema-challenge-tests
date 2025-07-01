@@ -1,3 +1,4 @@
+# .github/workflows/ci-cd-pipeline.yml
 name: CI/CD Pipeline
 
 on:
@@ -10,32 +11,31 @@ jobs:
     runs-on: ubuntu-latest
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
+      GH_TOKEN: ${{ secrets.PAT }}    # <-- PAT com permissão repo
 
     steps:
-      # 1) Faz checkout completo usando seu PAT para permitir pushes
-      - name: 📥 Checkout
+      - name: 📥 Checkout (fetch all history)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
 
-      # 2) Python 3.11
-      - name: 🐍 Setup Python
+      - name: 🐍 Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
 
-      # 3) Dependências Robot + Browser
       - name: 📦 Instala Dependências
         run: |
           pip install -r cinema-automation/requirements.txt
           pip install robotframework robotframework-browser
           rfbrowser init
 
-      # 4) Executa os testes (sempre gera output.xml mesmo se falhar)
-      - name: 🧪 Run Robot Tests
+      - name: 🛠️ Prepara logs
+        run: mkdir -p cinema-automation/logs
+
+      - name: 🧪 Executa Testes Robot
         run: |
-          mkdir -p cinema-automation/logs
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
@@ -43,47 +43,34 @@ jobs:
             cinema-automation/tests || true
         continue-on-error: true
 
-      # 5) Atualiza o README com o resultado dos testes
-      - name: 🧠 Update README.md
+      - name: 🧠 Atualiza README.md
         run: python update_readme.py
 
-      # 6) Comita e empurra o README atualizado em develop (skip ci)
-      - name: 📝 Commit & Push README
+      - name: 📝 Comita README.md atualizado
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add README.md
-          if ! git diff --cached --quiet; then
-            git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
-            git push origin develop
-          else
-            echo "✅ Nenhuma mudança no README"
-          fi
+          git diff --cached --quiet || git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
 
-      # 7) Salva os logs como artefato
-      - name: 💾 Upload Logs
+      - name: 💾 Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      # 8) Cancela se algum teste falhou
-      - name: 🚨 Abort if Tests Failed
+      - name: 🚨 Aborta se testes falharam
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "❌ Testes falharam. Interrompendo pipeline."
+            echo "❌ Testes falharam. Abortando."
             exit 1
           fi
 
-      # 9) Cria e faz merge do PR diretamente com o GH CLI
-      - name: 🤖 Create & Merge PR
-        env:
-          GH_TOKEN: ${{ secrets.PAT }}
+      - name: 🤖 Cria & Merge PR via GH CLI
+        shell: bash
         run: |
-          # Autentica o gh CLI
-          echo "${GH_TOKEN}" | gh auth login --with-token
-          # Se ainda não existe PR aberta de develop→main, crie uma
+          # Cria PR de develop → main, se não existir
           if ! gh pr list --state open --base main --head develop | grep -q develop; then
             gh pr create \
               --title "Merge Automático: develop ➡️ main" \
@@ -91,6 +78,5 @@ jobs:
               --base main --head develop \
               --label automerge
           fi
-          # Agora auto-merge com squash e delete branch
+          # Faz auto-merge com squash e delete branch develop
           gh pr merge develop --auto --squash --delete-branch
-        shell: bash
