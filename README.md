@@ -6,8 +6,7 @@
 
 ---
 
-## Relatórios de Testes
+## Relatórios de Testes (GitHub Pages)
 
-Assim que o workflow rodar, os artefatos estarão disponíveis na aba **Actions » CI/CD Pipeline » Artifacts**:
-
-- **robot-logs.zip** (contém `output.xml`, `log.html`, `report.html`)
+- [Relatório completo (report.html)](https://PeeeDrummm.github.io/cinema-challenge-tests/report.html)  
+- [Detalhes do log (log.html)](https://PeeeDrummm.github.io/cinema-challenge-tests/log.html)  
