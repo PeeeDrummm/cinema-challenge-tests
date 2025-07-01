@@ -1,6 +1,7 @@
 # 🤖 Projeto de Automação de Testes - Cinema Challenge
 
-![CI/CD Pipeline](https://github.com/PeeeDrummm/cinema-challenge-tests/actions/workflows/ci-cd-pipeline.yml/badge.svg)
+![CI/CD Pipeline](https://github.com/PeeeDrummm/cinema-challenge-tests/actions/workflows/ci-cd-pipeline.yml/badge.svg?branch=develop)
+
 
 > 🚀 Clique no badge para ver o status da última execução.
 

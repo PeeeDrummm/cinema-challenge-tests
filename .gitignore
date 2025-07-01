@@ -1,6 +1,6 @@
-# Logs do Robot Framework
-cinema-automation/logs/
-logs/
+# Ignora tudo em logs, EXCETO index.html
+cinema-automation/logs/*
+!cinema-automation/logs/index.html
 
 # Cache Python
 **/__pycache__/
