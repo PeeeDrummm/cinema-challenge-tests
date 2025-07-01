@@ -1,13 +1,10 @@
-# .github/workflows/deploy-pages.yml
 name: 🚀 Deploy Test Reports to GitHub Pages
 
-# Dispara sempre que houver push em develop (onde você gera os testes)
 on:
   push:
     branches:
       - develop
 
-# Permissões necessárias para publicar no Pages
 permissions:
   pages: write
   contents: read
@@ -17,29 +14,24 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1) Faz checkout leve
-      - name: 📥 Checkout
-        uses: actions/checkout@v4
+      # 1) Checkout leve
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      # 2) Baixa os logs gerados pelo outro workflow
-      - name: ⬇️ Download logs artifact
-        uses: actions/download-artifact@v3
+      # 2) Baixa os logs produzidos
+      - uses: actions/download-artifact@v4
         with:
           name: robot-logs
           path: public
 
-      # 3) Configura o ambiente GitHub Pages
-      - name: ⚙️ Configure Pages
-        uses: actions/configure-pages@v3
+      # 3) Configura o Pages
+      - uses: actions/configure-pages@v3
 
-      # 4) Empacota os arquivos estáticos em 'public/'
-      - name: 📦 Upload static files
-        uses: actions/upload-pages-artifact@v1
+      # 4) Empacota os HTMLs estáticos
+      - uses: actions/upload-pages-artifact@v1
         with:
           path: public
 
-      # 5) Publica o conteúdo em gh-pages
-      - name: 📢 Publish to GitHub Pages
-        uses: actions/deploy-pages@v1
+      # 5) Publica em gh-pages
+      - uses: actions/deploy-pages@v1
