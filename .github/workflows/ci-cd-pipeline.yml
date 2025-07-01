@@ -37,7 +37,6 @@ jobs:
           pip install -r cinema-automation/requirements.txt
           pip install robotframework robotframework-browser
           rfbrowser init
-
       # Executa testes (gera logs mesmo se falhar)
       - name: 🧪 Run Robot Framework tests
         working-directory: ./cinema-automation
@@ -61,7 +60,6 @@ jobs:
             echo "❌ Some tests failed. Aborting merge."
             exit 1
           fi
-
       # Merge completo de develop → main
       - name: 🔀 Merge develop into main
         run: |
