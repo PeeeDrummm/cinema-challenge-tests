@@ -31,3 +31,7 @@ Acessar Rota Protegida Após Logout
     Salvar Token de Autenticação
     Simular Logout (Descarta o Token)
     Validar Código de Status    401
+
+Acessar Rota
+    Inserir Usuário no Banco de Dados    Pedro Afonso    pedro.teste@qa.com    senha123
+    Realizar Login
