@@ -1,3 +1,4 @@
+# .github/workflows/ci-cd-pipeline.yml
 name: CI/CD Pipeline
 
 on:
@@ -8,15 +9,15 @@ on:
 jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
-
     env:
+      # Disponibiliza a URI do Mongo para todos os passos
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
       - name: 📥 Checkout do Repositório
         uses: actions/checkout@v4
 
-      - name: 🐍 Configura Python
+      - name: 🐍 Configura Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -24,42 +25,44 @@ jobs:
       - name: 📦 Instala Dependências
         run: |
           pip install -r cinema-automation/requirements.txt
-          python -m pip install robotframework
-          python -m pip install robotframework-browser
+          pip install robotframework robotframework-browser
           rfbrowser init
 
-      - name: 🧪 Executa os Testes Robot
+      - name: 🛠️ Cria pasta de logs
+        run: mkdir -p cinema-automation/logs
+
+      - name: 🧪 Executa os Testes Robot (continua mesmo se falhar)
         run: |
-          mkdir -p cinema-automation/logs
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
             --report cinema-automation/logs/report.html \
-            cinema-automation/tests || true
+            cinema-automation/tests
         continue-on-error: true
 
-      - name: 🧠 Atualiza README.md com Resultados
-        run: |
-          python update_readme.py
+      - name: 🧠 Atualiza README.md com resultados
+        run: python update_readme.py
 
       - name: 💾 Salva Logs como Artefato
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: logs-robot
+          name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Interrompe se houver Falha nos Testes
+      - name: 🚨 Interrompe se houver falha nos testes
         run: |
-          grep -q 'status="FAIL"' cinema-automation/logs/output.xml && {
-            echo "❌ Alguns testes falharam. O PR não será criado.";
-            exit 1;
-          } || echo "✅ Todos os testes passaram. Continuando..."
+          if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
+            echo "❌ Testes falharam. PR não será criado."
+            exit 1
+          else
+            echo "✅ Todos os testes passaram."
+          fi
 
-      - name: 🤖 Cria PR da develop para main
+      - name: 🤖 Cria PR de develop para main
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.PAT }}
+          token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "docs: 🤖 Atualiza README e testes [skip ci]"
           title: "Merge Automático: develop ➡️ main"
           body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
@@ -69,10 +72,3 @@ jobs:
           delete-branch: true
           draft: false
           labels: automerge
-
-      - name: 🔁 Faz Merge Automático do PR
-        uses: pascalgn/automerge-action@v0.16.3
-        with:
-          mergeMethod: squash
-        env:
-          GITHUB_TOKEN: ${{ secrets.PAT }}
