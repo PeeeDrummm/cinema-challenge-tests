@@ -11,7 +11,7 @@ permissions:
 
 jobs:
   deploy:
-    name: 🚀 Deploy to GitHub Pages
+    name: Publish Reports
     runs-on: ubuntu-latest
 
     steps:
@@ -21,7 +21,7 @@ jobs:
           fetch-depth: 1
 
       - name: ⬇️ Download logs artifact
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v4   # <— ATUALIZADO para v4
         with:
           name: robot-logs
           path: public

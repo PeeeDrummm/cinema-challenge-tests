@@ -6,7 +6,7 @@ on:
       - develop
 
 permissions:
-  contents: write    # para mesclar develop → main
+  contents: write    # para merge em main
 
 jobs:
   test-and-merge:
@@ -18,13 +18,13 @@ jobs:
       PAT:       ${{ secrets.PAT }}
 
     steps:
-      - name: 📥 Checkout repository
+      - name: 📥 Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
 
-      - name: 🐍 Set up Python 3.11
+      - name: 🐍 Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -32,33 +32,31 @@ jobs:
       - name: 📦 Install dependencies
         run: |
           pip install -r cinema-automation/requirements.txt
-          pip install robotframework
-          pip install robotframework-browser
-          # Inicializa o browser do Robot Framework sem apt-get
+          pip install robotframework robotframework-browser
           rfbrowser init
 
-      - name: 🧪 Run Robot Framework tests
+      - name: 🧪 Run Robot tests
         working-directory: ./cinema-automation
         run: |
           mkdir -p logs
           robot --outputdir logs tests/
         continue-on-error: true
 
-      - name: 📤 Upload logs as artifact
+      - name: 📤 Upload logs artifact
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v4   # v4 aqui, nunca v3
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Fail if any test failed
+      - name: 🚨 Abort if tests failed
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
             echo "❌ Some tests failed. Aborting merge."
             exit 1
           fi
 
-      - name: 🔀 Merge develop into main
+      - name: 🔀 Merge develop → main
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
