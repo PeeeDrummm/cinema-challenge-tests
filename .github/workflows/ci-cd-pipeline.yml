@@ -13,7 +13,7 @@ jobs:
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
-      - name: 📥 Checkout completo (fetch all branches)
+      - name: 📥 Checkout completo (todas as branches)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
@@ -29,9 +29,11 @@ jobs:
           pip install robotframework robotframework-browser
           rfbrowser init
 
+      - name: 🛠️ Prepara pasta de logs
+        run: mkdir -p cinema-automation/logs
+
       - name: 🧪 Executa Testes Robot (continua mesmo se falhar)
         run: |
-          mkdir -p cinema-automation/logs
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
@@ -42,14 +44,22 @@ jobs:
       - name: 🧠 Atualiza README.md com resultados
         run: python update_readme.py
 
-      - name: 💾 Salva artefato de logs
+      - name: 📝 Commit do README.md atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          # só comita se houver mudança
+          git diff --cached --quiet || git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
+
+      - name: 💾 Salva logs como artefato
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Interrompe se houver falhas nos testes
+      - name: 🚨 Encerra se algum teste falhou
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
             echo "❌ Testes falharam. PR não será criado."
@@ -60,16 +70,13 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          # Puxa últimos commits de main e develop
+          # Puxa main e develop
           git fetch origin main
           git fetch origin develop
           # Cria branch nova a partir de main
           git checkout origin/main -b pr-develop-to-main-${{ github.run_id }}
-          # Faz o merge completo da develop
+          # Faz merge completo da develop
           git merge --no-ff origin/develop -m "Merge develop ➡️ main [skip ci]"
-          # Garante que o README.md atualizado também está incluído
-          git add README.md
-          git commit -m "docs: 🤖 Atualiza README e testes [skip ci]" || echo "Nada a comitar no README"
           # Empurra a branch de PR usando seu PAT
           git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} HEAD:pr-develop-to-main-${{ github.run_id }}
         shell: bash
