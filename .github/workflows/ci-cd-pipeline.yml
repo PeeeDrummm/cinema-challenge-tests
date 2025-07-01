@@ -10,14 +10,17 @@ jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # Disponibiliza a URI do Mongo para todos os passos
       MONGO_URI: ${{ secrets.MONGO_URI }}
+      GH_TOKEN: ${{ secrets.PAT }}    # <-- PAT com permissão repo
 
     steps:
-      - name: 📥 Checkout do Repositório
+      - name: 📥 Checkout (fetch all history)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.PAT }}
 
-      - name: 🐍 Configura Python 3.11
+      - name: 🐍 Setup Python 3.11
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
@@ -28,47 +31,52 @@ jobs:
           pip install robotframework robotframework-browser
           rfbrowser init
 
-      - name: 🛠️ Cria pasta de logs
+      - name: 🛠️ Prepara logs
         run: mkdir -p cinema-automation/logs
 
-      - name: 🧪 Executa os Testes Robot (continua mesmo se falhar)
+      - name: 🧪 Executa Testes Robot
         run: |
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
             --report cinema-automation/logs/report.html \
-            cinema-automation/tests
+            cinema-automation/tests || true
         continue-on-error: true
 
-      - name: 🧠 Atualiza README.md com resultados
+      - name: 🧠 Atualiza README.md
         run: python update_readme.py
 
-      - name: 💾 Salva Logs como Artefato
+      - name: 📝 Comita README.md atualizado
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git diff --cached --quiet || git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
+
+      - name: 💾 Upload logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Interrompe se houver falha nos testes
+      - name: 🚨 Aborta se testes falharam
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "❌ Testes falharam. PR não será criado."
+            echo "❌ Testes falharam. Abortando."
             exit 1
-          else
-            echo "✅ Todos os testes passaram."
           fi
 
-      - name: 🤖 Cria PR de develop para main
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs: 🤖 Atualiza README e testes [skip ci]"
-          title: "Merge Automático: develop ➡️ main"
-          body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
-          base: main
-          branch: pr-develop-to-main
-          branch-suffix: timestamp
-          delete-branch: true
-          draft: false
-          labels: automerge
+      - name: 🤖 Cria & Merge PR via GH CLI
+        shell: bash
+        run: |
+          # Cria PR de develop → main, se não existir
+          if ! gh pr list --state open --base main --head develop | grep -q develop; then
+            gh pr create \
+              --title "Merge Automático: develop ➡️ main" \
+              --body "Este PR foi criado automaticamente após os testes passarem com sucesso." \
+              --base main --head develop \
+              --label automerge
+          fi
+          # Faz auto-merge com squash e delete branch develop
+          gh pr merge develop --auto --squash --delete-branch
