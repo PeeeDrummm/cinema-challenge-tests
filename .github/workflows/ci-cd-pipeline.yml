@@ -10,12 +10,13 @@ jobs:
   test-and-deploy:
     runs-on: ubuntu-latest
     env:
-      # Disponibiliza a URI do Mongo para todos os passos
       MONGO_URI: ${{ secrets.MONGO_URI }}
 
     steps:
-      - name: 📥 Checkout do Repositório
+      - name: 📥 Checkout completo (fetch all branches)
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: 🐍 Configura Python 3.11
         uses: actions/setup-python@v5
@@ -28,11 +29,9 @@ jobs:
           pip install robotframework robotframework-browser
           rfbrowser init
 
-      - name: 🛠️ Cria pasta de logs
-        run: mkdir -p cinema-automation/logs
-
-      - name: 🧪 Executa os Testes Robot (continua mesmo se falhar)
+      - name: 🧪 Executa Testes Robot (continua mesmo se falhar)
         run: |
+          mkdir -p cinema-automation/logs
           robot \
             --output cinema-automation/logs/output.xml \
             --log cinema-automation/logs/log.html \
@@ -43,32 +42,55 @@ jobs:
       - name: 🧠 Atualiza README.md com resultados
         run: python update_readme.py
 
-      - name: 💾 Salva Logs como Artefato
+      - name: 💾 Salva artefato de logs
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: robot-logs
           path: cinema-automation/logs/
 
-      - name: 🚨 Interrompe se houver falha nos testes
+      - name: 🚨 Interrompe se houver falhas nos testes
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
             echo "❌ Testes falharam. PR não será criado."
             exit 1
-          else
-            echo "✅ Todos os testes passaram."
           fi
 
-      - name: 🤖 Cria PR de develop para main
+      - name: 🏗️ Prepara branch de merge (main ← develop)
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Puxa últimos commits de main e develop
+          git fetch origin main
+          git fetch origin develop
+          # Cria branch nova a partir de main
+          git checkout origin/main -b pr-develop-to-main-${{ github.run_id }}
+          # Faz o merge completo da develop
+          git merge --no-ff origin/develop -m "Merge develop ➡️ main [skip ci]"
+          # Garante que o README.md atualizado também está incluído
+          git add README.md
+          git commit -m "docs: 🤖 Atualiza README e testes [skip ci]" || echo "Nada a comitar no README"
+          # Empurra a branch de PR usando seu PAT
+          git push https://x-access-token:${{ secrets.PAT }}@github.com/${{ github.repository }} HEAD:pr-develop-to-main-${{ github.run_id }}
+        shell: bash
+
+      - name: 🤖 Cria PR de pr-develop-to-main → main
+        id: create_pr
         uses: peter-evans/create-pull-request@v6
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "docs: 🤖 Atualiza README e testes [skip ci]"
+          token: ${{ secrets.PAT }}
+          commit-message: "chore: merge develop ➡️ main [skip ci]"
           title: "Merge Automático: develop ➡️ main"
           body: "Este PR foi criado automaticamente após os testes passarem com sucesso."
           base: main
-          branch: pr-develop-to-main
-          branch-suffix: timestamp
+          branch: pr-develop-to-main-${{ github.run_id }}
           delete-branch: true
           draft: false
           labels: automerge
+
+      - name: 🔄 Habilita Auto-Merge no PR
+        uses: peter-evans/enable-pull-request-automerge@v2
+        with:
+          token: ${{ secrets.PAT }}
+          pull-request: ${{ steps.create_pr.outputs.pull-request-number }}
+          merge-method: squash
