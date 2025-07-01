@@ -1,1 +1,109 @@
-...
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches:
+      - develop
+
+permissions:
+  contents: write       # para merge via git push
+  pages: write          # para GitHub Pages
+  id-token: write       # necessário para configure-pages
+
+jobs:
+  test:
+    name: 🧪 Run tests on develop
+    runs-on: ubuntu-latest
+    env:
+      MONGO_URI: ${{ secrets.MONGO_URI }}
+      JWT_SECRET: ${{ secrets.JWT_SECRET }}
+    steps:
+      - name: 📥 Checkout (all history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: 🐍 Set up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: 📦 Install dependencies
+        run: |
+          pip install -r cinema-automation/requirements.txt
+          python -m playwright install-deps
+          python -m playwright install
+
+      - name: 🧪 Run Robot tests (always produce logs)
+        working-directory: ./cinema-automation
+        run: |
+          mkdir -p logs
+          robot --outputdir logs tests/
+        continue-on-error: true
+
+      - name: 📤 Upload logs as artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: robot-logs
+          path: cinema-automation/logs/
+
+      - name: 🚨 Fail if any test failed
+        run: |
+          if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
+            echo "❌ Testes falharam. Abortando."
+            exit 1
+          fi
+
+  deploy-pages:
+    name: 🚀 Deploy reports to GitHub Pages
+    needs: test
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      contents: read
+    steps:
+      - name: 📥 Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: ⬇️ Download logs artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: robot-logs
+          path: public
+
+      - name: ⚙️ Configure GitHub Pages
+        uses: actions/configure-pages@v3
+
+      - name: 📦 Upload artifact for Pages
+        uses: actions/upload-pages-artifact@v1
+        with:
+          path: public
+
+      - name: 📢 Publish to GitHub Pages
+        uses: actions/deploy-pages@v1
+
+  merge:
+    name: 🔀 Merge develop → main
+    needs: test
+    if: needs.test.result == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: 📥 Checkout both branches
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # usar PAT para permitir push
+          token: ${{ secrets.PAT }}
+
+      - name: 🔀 Merge develop into main
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git fetch origin main
+          git fetch origin develop
+          git checkout main
+          git merge --no-ff origin/develop -m "Merge develop ➡️ main [skip ci]"
+          git push origin main
