@@ -15,49 +15,42 @@ jobs:
     name: Test, Update README and Merge
     if: "!contains(github.event.head_commit.message, '[skip ci]')"
     runs-on: ubuntu-22.04
+
     env:
       MONGO_URI: ${{ secrets.MONGO_URI }}
       JWT_SECRET: ${{ secrets.JWT_SECRET }}
       GH_TOKEN: ${{ secrets.PAT }}
 
     steps:
-      # 1) Checkout completo com seu PAT
       - name: Checkout repository
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           token: ${{ secrets.PAT }}
 
-      # 2) Setup Python
       - name: Set up Python 3.10
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      # 3) Instala dependências
       - name: Install Python dependencies
         run: |
           pip install -r cinema-automation/requirements.txt
           pip install pytz
 
-      # 4) Playwright
-      - name: Install Playwright system dependencies
-        run: python -m playwright install-deps
+      - name: Install Playwright deps & browsers
+        run: |
+          python -m playwright install-deps
+          python -m playwright install
 
-      - name: Install Playwright browsers
-        run: python -m playwright install
-
-      # 5) Executa testes Robot (gera logs mesmo em falha)
       - name: Run Robot Framework tests
         working-directory: ./cinema-automation
         run: robot --outputdir logs tests/
         continue-on-error: true
 
-      # 6) Atualiza o README.md
       - name: Update README.md with test results
         run: python update_readme.py
 
-      # 7) Comita e empurra o README.md de volta à develop (skip ci)
       - name: Commit & Push README.md
         run: |
           git config user.name "github-actions[bot]"
@@ -66,11 +59,8 @@ jobs:
           if ! git diff --cached --quiet; then
             git commit -m "docs: 🤖 Atualiza README e testes [skip ci]"
             git push origin develop
-          else
-            echo "✅ No changes to README.md"
           fi
 
-      # 8) Upload dos logs como artefato
       - name: Upload Robot logs
         if: always()
         uses: actions/upload-artifact@v4
@@ -78,27 +68,24 @@ jobs:
           name: robot-logs
           path: cinema-automation/logs/
 
-      # 9) Abort se algum teste falhou (não cria PR)
       - name: Abort if tests failed
         run: |
           if grep -q 'status="FAIL"' cinema-automation/logs/output.xml; then
-            echo "❌ Testes falharam. Pipeline encerrado sem PR."
+            echo "❌ Testes falharam. Encerrando."
             exit 1
           fi
 
-      # 10) Cria e faz merge do PR de develop → main via GH CLI
       - name: Create & Merge PR via GH CLI
         shell: bash
         run: |
-          # Cria PR se ainda não existir
+          # cria PR develop→main se não existir
           if ! gh pr list --state open --base main --head develop | grep -q develop; then
             gh pr create \
               --title "Merge Automático: develop ➡️ main" \
-              --body "✅ Testes passaram e README atualizado. Merge automático." \
+              --body "✅ Testes passaram e README atualizado." \
               --base main --head develop \
               --label automerge
           fi
-
-          # Captura o número do PR e faz squash merge
+          # captura o PR e faz squash + delete usando auto-merge
           PR_NUM=$(gh pr list --state open --base main --head develop --json number -q '.[0].number')
-          gh pr merge "$PR_NUM" --squash --delete-branch --confirm
+          gh pr merge "$PR_NUM" --squash --delete-branch --auto
