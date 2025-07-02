@@ -4,6 +4,7 @@ Library          RequestsLibrary
 Library          OperatingSystem
 Library          Collections
 Library          ../utils/db_keywords.py
+Library          ../utils/GeminiValidationLibrary.py    WITH NAME    base
 
 *** Variables ***
 # Loca / Nuvem - Mudar antes de mandar para Develop
@@ -19,6 +20,18 @@ Validar Código de Status
     [Arguments]                    ${status_esperado}
     # Compara o status da última resposta com o esperado
     Should Be Equal As Integers    ${ULTIMA_RESPOSTA.status_code}    ${status_esperado}
+
+Analisar e Validar Resposta com IA
+    # Valida o status code e o conteúdo de uma resposta usando o Gemini.
+    [Arguments]    ${status_code_esperado}    ${contexto_esperado}
+    
+    ${analise}=    Validar Resposta Da Api Com Ia
+    ...            ${ULTIMA_RESPOSTA.text}          # Argumento 1: resposta_real_api
+    ...            ${ULTIMA_RESPOSTA.status_code}   # Argumento 2: status_code_real
+    ...            ${status_code_esperado}          # Argumento 3: status_code_esperado
+    ...            ${contexto_esperado}             # Argumento 4: contexto_esperado
+    
+    Log To Console    \nAnálise da IA: ${analise}
 
 Validar Mensagem Response
     # Valida a Mensagem de Retorno

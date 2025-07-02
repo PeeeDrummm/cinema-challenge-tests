@@ -43,6 +43,17 @@ Realizar Login
     Set Suite Variable             ${ULTIMA_RESPOSTA}            ${response}
     RETURN                         ${response}
 
+Realizar Login Admin
+    # Monta o corpo com dados fixos para o registro
+    ${body}=    Create Dictionary
+    ...         email=admin@example.com
+    ...         password=senha123
+    
+    # Executa o POST e salva a última resposta na suíte
+    ${response}=    POST           ${BASE_API_URL}/auth/login    json=${body}
+    Set Suite Variable             ${ULTIMA_RESPOSTA}            ${response}
+    RETURN                         ${response}
+
 Salvar Token De Autenticação
     # Converte a resposta em dicionário e salva o token para uso posterior
     ${json}=              Convert To Dictionary    ${ULTIMA_RESPOSTA.json()}
