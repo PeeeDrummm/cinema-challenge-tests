@@ -42,3 +42,14 @@ Selecionar Assento Já Ocupado
     Efetuar Nova Reserva    A    1
     # Validar Código de Status     400
     Analisar e Validar Resposta com IA    400    The following seats are not available: A1
+
+Criar Sessão Com ID de Filme Inexistente
+    [Tags]    API    CT031
+    Realizar Login Admin
+    Salvar Token de Autenticação
+
+    Obter Primeiro Teatro Disponível
+    Criar Nova Sessão de Filme    6859c41523af684f6db4e1f0
+
+    Validar Código de Status     404
+    Validar Mensagem Response    Movie not found
