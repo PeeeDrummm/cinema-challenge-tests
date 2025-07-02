@@ -13,9 +13,10 @@ jobs:
     name: 🧪 Run tests & Merge
     runs-on: ubuntu-latest
     env:
-      MONGO_URI: ${{ secrets.MONGO_URI }}
-      JWT_SECRET: ${{ secrets.JWT_SECRET }}
-      PAT:       ${{ secrets.PAT }}
+      MONGO_URI:        ${{ secrets.MONGO_URI }}
+      JWT_SECRET:       ${{ secrets.JWT_SECRET }}
+      PAT:              ${{ secrets.PAT }}
+      GEMINI_API_KEY:   ${{ secrets.GEMINI_API_KEY }}
 
     steps:
       # Checkout completo para permitir merge e acessos
