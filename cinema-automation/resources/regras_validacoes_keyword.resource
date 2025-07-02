@@ -54,3 +54,27 @@ Efetuar Nova Reserva
 
     # Salva a resposta para que a keyword de validação com IA possa usá-la
     Set Test Variable    ${ULTIMA_RESPOSTA}    ${response}
+
+Obter Primeiro Teatro Disponível
+    # Pega o ID do primeiro teatro listada pela API e o salva para uso no teste.
+    ${headers}=         Create Dictionary    Authorization=Bearer ${TOKEN}
+    ${response}=        GET                  ${BASE_API_URL}/theaters    headers=${headers}
+    Status Should Be    200                  ${response}
+
+    ${json}=              Convert To Dictionary    ${response.json()}
+    ${theater_id}=        Get From Dictionary      ${json["data"][0]}    _id
+    Set Suite Variable    ${THEATER_ID}            ${theater_id}
+
+Criar Nova Sessão de Filme
+    [Arguments]    ${movie_id}
+
+    ${headers}=    Create Dictionary    Authorization=Bearer ${TOKEN}
+    ${body}=       Create Dictionary
+    ...            movie=${movie_id}
+    ...            theater=${THEATER_ID}
+    ...            datetime=2025-06-23T23:00:00.000Z
+    ...            fullPrice=80.0
+    ...            halfPrice=20.0
+
+    ${response}=          POST                  ${BASE_API_URL}/sessions    headers=${headers}    json=${body}    expected_status=any
+    Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
