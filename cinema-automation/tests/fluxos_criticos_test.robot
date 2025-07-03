@@ -12,11 +12,13 @@ Resource       ../resources/fluxos_criticos_keyword.resource
 Resource       ../resources/setup_auth_keyword.resource
 Resource       ../resources/setup_admin_keyword.resource
 
-Suite Setup    Iniciar Navegador
+Suite Setup       Iniciar Navegador
+Suite Teardown    Fechar Navegador
 
 *** Test Cases ***
 Fluxo Reserva
     [Tags]    Front    Fluxo1
+    Iniciar Página Limpa
     Ir para Página de Login
     Efetuar Login    user@example.com    senha123
     Validar Alerta Contendo Mensagem    Login realizado com sucesso!
@@ -33,6 +35,7 @@ Fluxo Reserva
 
 Fluxo Histórico
     [Tags]    Front    Fluxo2
+    Iniciar Página Limpa
     Ir para Página de Login
     Efetuar Login    user@example.com    senha123
     Validar Alerta Contendo Mensagem    Login realizado com sucesso!

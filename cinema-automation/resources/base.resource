@@ -24,6 +24,13 @@ Iniciar Navegador
     New Browser    browser=${BROWSER}    headless=true
     New Page       url=${BASE_FRONT_URL}
 
+Fechar Navegador
+    Close Browser
+
+Iniciar Página Limpa
+    New Context
+    New Page       url=${BASE_FRONT_URL}
+
 Validar Código de Status
     [Arguments]                    ${status_esperado}
     # Compara o status da última resposta com o esperado
