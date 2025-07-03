@@ -20,6 +20,10 @@ Criar Sessão API
     # Cria uma sessão HTTP nomeada "CinemaAPP" com a URL base da API
     Create Session    CinemaAPP    ${BASE_API_URL}
 
+Iniciar Navegador
+    New Browser    browser=${BROWSER}    headless=true
+    New Page       url=${BASE_FRONT_URL}
+
 Validar Código de Status
     [Arguments]                    ${status_esperado}
     # Compara o status da última resposta com o esperado
@@ -42,7 +46,3 @@ Validar Mensagem Response
     [Arguments]        ${mensagem_esperada}
     ${mensagem}=       Set Variable            ${ULTIMA_RESPOSTA.json()['message']}
     Should Be Equal    ${mensagem}             ${mensagem_esperada}
-
-Iniciar Navegador
-    New Browser    browser=${BROWSER}    headless=true
-    New Page       url=${BASE_FRONT_URL}

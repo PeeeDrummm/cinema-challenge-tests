@@ -16,6 +16,7 @@ Suite Setup    Iniciar Navegador
 
 *** Test Cases ***
 Fluxo Reserva
+    [Tags]    Front    Fluxo1
     Ir para Página de Login
     Efetuar Login    user@example.com    senha123
     Validar Alerta Contendo Mensagem    Login realizado com sucesso!
@@ -29,3 +30,11 @@ Fluxo Reserva
     Realizar Login Admin
     Salvar Token de Autenticação
     Deletar Reserva
+
+Fluxo Histórico
+    [Tags]    Front    Fluxo2
+    Ir para Página de Login
+    Efetuar Login    user@example.com    senha123
+    Validar Alerta Contendo Mensagem    Login realizado com sucesso!
+    Ir Para Página de Minhas Reservas
+    Validar Reservas
