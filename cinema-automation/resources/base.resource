@@ -21,7 +21,7 @@ Criar Sessão API
     Create Session    CinemaAPP    ${BASE_API_URL}
 
 Iniciar Navegador
-    New Browser    browser=${BROWSER}    headless=false
+    New Browser    browser=${BROWSER}    headless=true
     New Page       url=${BASE_FRONT_URL}
 
 Validar Código de Status
