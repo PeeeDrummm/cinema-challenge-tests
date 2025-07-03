@@ -1,10 +1,5 @@
 *** Settings ***
-Documentation    Testes de Fluxo Completo de Reserva:
-...              Fazer login
-...              navegar até um filme
-...              selecionar uma sessão
-...              escolher um assento disponível
-...              e verificar se chegou à tela de resumo.
+Documentation    Testes de Fluxos Críticos (Caminho Feliz).
 
 Resource       ../resources/base.resource
 Resource       ../resources/regras_validacoes_keyword.resource
