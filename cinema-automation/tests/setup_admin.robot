@@ -60,3 +60,8 @@ Sessões de Filme CRUD
     
     Deletar Sala
     Deletar Filme
+
+Reservas CRUD
+    [Tags]    API    CT-N/A
+    # Fluxo em Construção
+    Deletar Reserva
