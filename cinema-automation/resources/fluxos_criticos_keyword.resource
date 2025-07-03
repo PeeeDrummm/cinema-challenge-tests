@@ -1,10 +1,5 @@
 *** Settings ***
-Documentation    Keywords de Fluxo Completo de Reserva:
-...              Fazer login
-...              navegar até um filme
-...              selecionar uma sessão
-...              escolher um assento disponível
-...              e verificar se chegou à tela de resumo.
+Documentation    Keywords de Fluxos Críticos (Caminho Feliz).
 
 Resource        ./base.resource
 
@@ -24,10 +19,10 @@ Efetuar Login    # Recebe o E-mail e Senha
     Click          css=.login-btn
 
 Validar Alerta Contendo Mensagem    # Valida se o elemento .alert-contet contém a mensagem recebida
-    [Arguments]    ${mensagem_esperada}
+    [Arguments]                ${mensagem_esperada}
     Wait For Elements State    css=div.alert-content    visible
     Get Text                   css=div.alert-content    ==    ${mensagem_esperada}
-
+    
 Ir para Página de Filmes em Cartaz
     # Clica no Botão Filmes em Cartaz
     Click                      css=header a[href="/movies"]
