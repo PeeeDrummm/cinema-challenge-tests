@@ -13,7 +13,7 @@ Library    Browser
 # ${BASE_API_URL}    http://localhost:3000/api/v1
 ${BASE_API_URL}    https://cinema-challenge-back-xelh.onrender.com/api/v1
 ${BASE_FRONT_URL}    https://cinema-challenge-front.onrender.com/
-${BROWSER}    firefox
+${BROWSER}    chromium
 
 *** Keywords ***
 Criar Sessão API
@@ -44,5 +44,5 @@ Validar Mensagem Response
     Should Be Equal    ${mensagem}             ${mensagem_esperada}
 
 Iniciar Navegador
-    New Browser    browser=${BROWSER}    headless=false
+    New Browser    browser=${BROWSER}    headless=true
     New Page       url=${BASE_FRONT_URL}

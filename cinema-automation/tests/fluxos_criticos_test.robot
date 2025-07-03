@@ -9,8 +9,8 @@ Documentation    Testes de Fluxo Completo de Reserva:
 Resource       ../resources/base.resource
 Resource       ../resources/regras_validacoes_keyword.resource
 Resource       ../resources/fluxos_criticos_keyword.resource
-Resource    ../resources/setup_auth_keyword.resource
-Resource    ../resources/setup_admin_keyword.resource
+Resource       ../resources/setup_auth_keyword.resource
+Resource       ../resources/setup_admin_keyword.resource
 
 Suite Setup    Iniciar Navegador
 
