@@ -41,3 +41,14 @@ Fluxo Histórico
     Validar Alerta Contendo Mensagem    Login realizado com sucesso!
     Ir Para Página de Minhas Reservas
     Validar Reservas
+
+Fluxo Busca Filmes
+    [Tags]    Front    Fluxo3
+    Realizar Login Admin
+    Salvar Token de Autenticação
+    Criar Filme    resources/fixtures/filme_criacao.json
+
+    Ir para Página de Filmes em Cartaz
+    Buscar Filmes e Validar    Borat: O Segundo Melhor Repórter do Glorioso País Cazaquistão Viaja à América
+
+    Deletar Filme
