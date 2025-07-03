@@ -204,3 +204,13 @@ Listar Todas Sessões de Filmes
     ...    Set Suite Variable    ${SESSAO_ID}    ${json["data"][${index}]["_id"]}
 
     Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
+
+Deletar Reserva
+    # [Arguments]    ${reserva_id}
+
+    ${headers}=    Create Dictionary
+    ...            Authorization=Bearer ${TOKEN}
+    ...            Content-Type=application/json
+
+    ${response}=                   DELETE                     ${BASE_API_URL}/reservations/${RESERVA_ID}    headers=${headers}
+    Should Be Equal As Integers    ${response.status_code}    200
