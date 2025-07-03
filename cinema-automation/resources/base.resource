@@ -3,6 +3,7 @@ Documentation    Arquivo base com inicialização de sessão e variáveis comuns
 Library          RequestsLibrary
 Library          OperatingSystem
 Library          Collections
+Library          JSONLibrary
 Library          ../utils/db_keywords.py
 Library          ../utils/GeminiValidationLibrary.py    WITH NAME    base
 
