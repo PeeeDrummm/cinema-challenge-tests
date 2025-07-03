@@ -17,6 +17,8 @@ jobs:
       JWT_SECRET:       ${{ secrets.JWT_SECRET }}
       PAT:              ${{ secrets.PAT }}
       GEMINI_API_KEY:   ${{ secrets.GEMINI_API_KEY }}
+      BROWSER:          chromium
+      HEADLESS:         true
 
     steps:
       # Checkout completo para permitir merge e acessos

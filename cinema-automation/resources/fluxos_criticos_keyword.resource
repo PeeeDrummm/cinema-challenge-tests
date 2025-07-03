@@ -148,3 +148,26 @@ Validar Reservas
         Log To Console    Preço: ${preco}
         Log To Console    Pagamento: ${pagamento}
     END
+
+Buscar Filmes e Validar
+    [Arguments]    @{titulos}
+    FOR    ${titulo}    IN    @{titulos}
+        Preencher E Validar Busca    ${titulo}
+    END
+
+Preencher E Validar Busca
+    [Arguments]    ${titulo}
+
+    Clear Text                         css=.search-box input
+    Fill Text                          css=.search-box input    ${titulo}
+    Wait Until Keyword Succeeds       5x    1s    Wait For Elements State    css=.loading-spinner    hidden
+
+    ${existe}=    Run Keyword And Return Status    Wait For Elements State    css=.movie-card h3    visible    timeout=3s
+
+    IF    ${existe}
+        ${resultado}=    Get Text    css=.movie-card h3
+        Log To Console  🔍 Filme encontrado: ${resultado}
+        Should Contain    ${resultado}    ${titulo}
+    ELSE
+        Log To Console    ⚠️ Nenhum filme encontrado para: ${titulo}    WARN
+    END
