@@ -106,6 +106,7 @@ cinema-challenge-tests/
 | `MONGO_URI` | URI do MongoDB |
 | `JWT_SECRET` | Chave secreta JWT |
 | `PAT` | Token de acesso ao repositório |
+| `GEMINI_API_KEY` | Chave API Google Gemini LLM |
 
 ---
 
