@@ -11,24 +11,21 @@
   <img src="https://img.shields.io/badge/Playwright-45ba4b?style=for-the-badge&logo=playwright&logoColor=white" />
   <img src="https://img.shields.io/badge/python-3.11-3776AB?style=for-the-badge&logo=python&logoColor=white" />
 </p>
-
----
-
-## 🚀 Sobre o Projeto
-
-Este repositório contém os **testes automatizados** para o projeto [Cinema Challenge Front](https://github.com/juniorschmitz/cinema-challenge-front) + [Cinema Challenge Back](https://github.com/juniorschmitz/cinema-challenge-back), utilizando Robot Framework com integração contínua via GitHub Actions.  
-
-A pipeline cobre testes funcionais completos, garantindo qualidade e robustez para o backend (API REST) e o frontend da aplicação.
-
----
-
 <p align="center">
-  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDE5b2xhOHo4Znc1d3BtOW54dm0xajYxamdqZmVlb3l5bGp1aG1nNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gG6OcTSRWaSis/giphy.gif" width="500" />
+  <img src="https://media1.tenor.com/m/9gyW2QldGvkAAAAd/me-atrapaste-es-cine.gif" width="670" />
 </p>
 
 ---
 
-## 📊 Status e Relatórios
+## 📽️ Sobre o Projeto
+
+Este repositório reúne os **testes automatizados** para o [Cinema Challenge Front](https://github.com/juniorschmitz/cinema-challenge-front) e [Cinema Challenge Back](https://github.com/juniorschmitz/cinema-challenge-back), utilizando **Robot Framework** com **Playwright** e integração contínua com **GitHub Actions**.
+
+A automação cobre fluxos críticos e funcionalidades da aplicação, com validações para o backend (API REST) e frontend (UI).
+
+---
+
+## 📊 Status & Relatórios
 
 | Recurso | Link |
 |---------|------|
@@ -38,8 +35,7 @@ A pipeline cobre testes funcionais completos, garantindo qualidade e robustez pa
 
 ---
 
-<details open>
-  <summary>🔨 <strong>Tecnologias Utilizadas</strong></summary>
+## 🛠️ Tecnologias Utilizadas
 
   - 🐍 **Python 3.11**
   - 🤖 **Robot Framework**
@@ -48,84 +44,91 @@ A pipeline cobre testes funcionais completos, garantindo qualidade e robustez pa
   - 📊 **GitHub Pages**
   - 📦 **MongoDB**
   - 🔑 **JWT Authentication**
-</details>
 
 ---
 
-<details>
-  <summary>⚡ <strong>Como Executar os Testes Localmente</strong></summary>
+## ⚙️ Como Executar Localmente
 
 ```bash
-# Clone o repositório
+# Clonar repositório
 git clone https://github.com/PeeeDrummm/cinema-challenge-tests.git
 cd cinema-automation
 
-# Ambiente virtual
+# Criar ambiente virtual
 python -m venv .venv
 source .venv/bin/activate  # Linux/Mac
-.venv\Scripts\activate     # Windows
+.venv\Scripts\activate   # Windows
 
-# Dependências
+# Instalar dependências
 pip install -r requirements.txt
 rfbrowser init
 
-# Executar testes
+# Rodar os testes
 robot --outputdir logs tests/
 ```
 
-</details>
-
 ---
 
-## 🧩 Estrutura do Projeto
+## 🧱 Estrutura do Projeto
 
-```bash
-ARRUMANDO
+```
+📁 cinema-challenge-tests/
+├── .github/workflows/         # Pipelines de CI/CD e deploy
+├── cinema-automation/         # Código de testes automatizados
+│   ├── logs/                  # Relatórios e evidências. Gerado pelo Actions. Não Commitados.
+│   ├── resources/             # Keywords e mapeamentos (Pages, Services, Fixtures)
+│   ├── tests/                 # Casos de teste organizados
+│   ├── utils/                 # Helpers e bibliotecas customizadas
+│   └── requirements.txt       # Requisitos para rodar a suíte de testes
+├── Mapa Mental.xmind          # Mapa Mental da API
+├── Matriz de Risco.xlsx       # Análise de risco
+├── Sessão de Teste.docx       # Evidências exploratórias
+├── Execução de Testes.xlsx    # Evidências, Planejamento e Resultado de execuções
+├── Plano de Testes.pdf        # Plano de Testes
+└── README.md
 ```
 
 ---
 
-## 🌟 Recursos da Pipeline Automatizada
+## 🚀 GitHub Actions e Deploy
 
-- 🔄 Push na branch `develop` dispara testes automaticamente.
-- ✅ Se os testes passarem, a pipeline mescla automaticamente o código na branch `main`.
-- 🌐 Relatórios automáticos publicados no GitHub Pages.
+- 🚀 Push na `develop` executa a pipeline automaticamente
+- ✅ Testes bem-sucedidos geram PR automática para `main`
+- 🌐 Relatórios são publicados automaticamente no GitHub Pages
 
 ---
 
-## 🔐 Secrets Necessários (GitHub)
+## 🔐 Segredos Necessários (GitHub)
 
-| Secret | Descrição |
-|--------|-----------|
-| `MONGO_URI` | URI do MongoDB |
-| `JWT_SECRET` | Chave secreta JWT |
-| `PAT` | Token de acesso ao repositório |
+| Variável | Descrição |
+|----------|-----------|
+| `MONGO_URI` | Conexão com banco MongoDB |
+| `JWT_SECRET` | Chave JWT para autenticação |
+| `PAT` | Token de acesso ao GitHub (Personal Access Token) |
 | `GEMINI_API_KEY` | Chave API Google Gemini LLM |
 
 ---
 
-## 🤝 Contribuindo
+## 💡 Inovações Aplicadas
 
-Pull requests são bem-vindas. Para mudanças maiores, por favor abra uma issue primeiro para discutir o que você gostaria de alterar.
+- 💬 Validação com IA usando Gemini
+- 🔄 CI/CD automatizado com merge inteligente
+- 📚 Organização modular com Page e Service Objects
+- 🤖 Geração e reaproveitamento de dados dinâmicos
 
 ---
 
 ## 📄 Licença
 
-Distribuído sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
+Distribuído sob licença MIT. Veja [`LICENSE`](https://github.com/PeeeDrummm/cinema-challenge-tests/blob/main/LICENSE "`LICENSE`") para detalhes.
 
 ---
 
 <p align="center">
-  <img src="https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif" width="60"/><br>
-  Feito com ❤️ por <b><a href="https://github.com/PeeeDrummm">Pedro Afonso</a></b>
+  <img src="https://media4.giphy.com/media/v1.Y2lkPTc5MGI3NjExeDE5b2xhOHo4Znc1d3BtOW54dm0xajYxamdqZmVlb3l5bGp1aG1nNiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/gG6OcTSRWaSis/giphy.gif" width="670" />
 </p>
 
 <p align="center">
-  <a href="https://www.linkedin.com/in/pedro-afonso-a-silva/">
-    <img src="https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white" />
-  </a>
-  <a href="https://github.com/PeeeDrummm">
-    <img src="https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white" />
-  </a>
+  <img src="https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif" width="60"/><br>
+  Feito com ❤️ por <a href="https://github.com/PeeeDrummm">Pedro Afonso</a>
 </p>
