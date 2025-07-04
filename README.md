@@ -133,3 +133,8 @@ Distribuído sob licença MIT. Veja [`LICENSE`](https://github.com/PeeeDrummm/ci
   <img src="https://media.giphy.com/media/ZVik7pBtu9dNS/giphy.gif" width="60"/><br>
   Feito com ❤️ por <a href="https://github.com/PeeeDrummm">Pedro Afonso</a>
 </p>
+
+Olá! Meu nome é Pedro Afonso de Alencar Silva, tenho 25 anos, sou estudante do curso de Análise e Desenvolvimento de Sistemas pela UniCesumar, atualmente no 3.º Semestre, e moro na cidade de Lavras, MG.
+
+Sou um homem, tenho olhos verdes, cabelos castanho-claros e pele clara.
+No dia da apresentação, estava vestindo uma camisa xadrez em tons de verde, azul e branco, e um headset preto com detalhes bege, além de óculos com armação escura.
