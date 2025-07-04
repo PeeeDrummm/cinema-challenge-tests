@@ -82,9 +82,10 @@ robot --outputdir logs tests/
 │   └── requirements.txt       # Requisitos para rodar a suíte de testes
 ├── Mapa Mental.xmind          # Mapa Mental da API
 ├── Matriz de Risco.xlsx       # Análise de risco
-├── Sessão de Teste.docx       # Evidências exploratórias
 ├── Execução de Testes.xlsx    # Evidências, Planejamento e Resultado de execuções
 ├── Plano de Testes.pdf        # Plano de Testes
+├── Exploração Postman.json    # Collection do Postman dos Endpoints da API
+├── Sessão de Teste.docx       # Evidências exploratórias
 └── README.md
 ```
 
