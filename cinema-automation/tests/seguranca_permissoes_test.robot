@@ -2,8 +2,6 @@
 Documentation    Testes para o Endpoint de Segurança e Permissões  
 
 Resource       ../resources/base.resource
-Resource       ../resources/setup_auth_keyword.resource
-Resource       ../resources/regras_validacoes_keyword.resource
 
 Suite Setup    Criar Sessão API
 
@@ -16,7 +14,7 @@ Acessar Rota Admin com Usuário
     Salvar Token de Autenticação
     
     Obter Primeiro Teatro Disponível
-    Criar Nova Sessão de Filme    68605db5d993bb1557cc8fd7
+    Criar Nova Sessão de Filme            68605db5d993bb1557cc8fd7
 
-    Validar Código de Status     403
-    Validar Mensagem Response    User role user is not authorized to access this route
+    Validar Código de Status              403
+    Validar Mensagem Response             User role user is not authorized to access this route
