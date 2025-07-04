@@ -1,11 +1,12 @@
 *** Settings ***
-Documentation    Keywords para o Endpoint de Autenticação  
+Documentation    Documentation    Service Object – endpoint **/auth** (login, registro, token helpers).
 
-Resource        ./base.resource
+Resource         ../base.resource
 
 *** Keywords ***
 Registrar um Novo Usuário
-    # Monta o corpo com dados fixos para o registro
+    [Documentation]    POST /auth/register – cria usuário.
+    ...                Args: nome, email, senha, status_esperado (sucesso/erro).
     [Arguments]     ${nome}    ${email}    ${senha}    ${status_esperado}
     ${body}=        Create Dictionary
     ...             name=${nome}
@@ -19,47 +20,44 @@ Registrar um Novo Usuário
     ...    POST     ${BASE_API_URL}/auth/register    json=${body}    expected_status=any
 
     Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
-    RETURN    ${response}
-    
-    # Anterior sem a validação de valido e invalido
-    # ${body}=    Create Dictionary
-    # ...         name=Pedro Afonso
-    # ...         email=pedro.teste@qa.com
-    # ...         password=senha123
-    
-    # # Executa o POST e salva a última resposta na suíte
-    # ${response}=    POST           ${BASE_API_URL}/auth/register    json=${body}
-    # Set Suite Variable             ${ULTIMA_RESPOSTA}               ${response}
-    # RETURN                         ${response}
+    RETURN                ${response}
 
 Realizar Login
-    # Monta o corpo com dados fixos para o registro
+    [Documentation]    POST /auth/login usando ${TEST_USER_EMAIL}/${TEST_USER_PASSWORD}.
     ${body}=    Create Dictionary
     ...         email=${TEST_USER_EMAIL}
     ...         password=${TEST_USER_PASSWORD}
     
-    # Executa o POST e salva a última resposta na suíte
     ${response}=    POST           ${BASE_API_URL}/auth/login    json=${body}
     Set Suite Variable             ${ULTIMA_RESPOSTA}            ${response}
     RETURN                         ${response}
 
 Realizar Login Admin
-    # Monta o corpo com dados fixos para o registro
+    [Documentation]    POST /auth/login fixo (admin@example.com / senha123).
     ${body}=    Create Dictionary
     ...         email=admin@example.com
     ...         password=senha123
     
-    # Executa o POST e salva a última resposta na suíte
     ${response}=    POST           ${BASE_API_URL}/auth/login    json=${body}
     Set Suite Variable             ${ULTIMA_RESPOSTA}            ${response}
     RETURN                         ${response}
 
 Salvar Token De Autenticação
-    # Converte a resposta em dicionário e salva o token para uso posterior
+    [Documentation]    Extrai "data.token" da última resposta e salva em ${TOKEN}.
     ${json}=              Convert To Dictionary    ${ULTIMA_RESPOSTA.json()}
     Set Suite Variable    ${TOKEN}                 ${json["data"]["token"]}
 
 Simular Logout (Descarta o Token)
-    # Tenta acessar rota protegida com token antigo / Faz requisição SEM o token
+    [Documentation]    Acessa rota protegida sem token para validar logout (espera 401/403).
     ${response}=          GET                   ${BASE_API_URL}/reservations/me    expected_status=any
     Set Suite Variable    ${ULTIMA_RESPOSTA}    ${response}
+
+Realizar Login Com Senha Incorreta
+    [Documentation]    POST /auth/login com senha inválida; grava ${ULTIMA_RESPOSTA} (espera 4xx).
+    ${body}=    Create Dictionary
+    ...         email=${TEST_USER_EMAIL}
+    ...         password=pwd123456
+    
+    ${response}=                   POST                          ${BASE_API_URL}/auth/login    json=${body}    expected_status=ANY
+    Set Suite Variable             ${ULTIMA_RESPOSTA}            ${response}
+    RETURN                         ${response}

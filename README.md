@@ -80,13 +80,7 @@ robot --outputdir logs tests/
 ## 🧩 Estrutura do Projeto
 
 ```bash
-cinema-challenge-tests/
-├── cinema-automation/
-│   ├── tests/                  # Testes automatizados
-│   ├── logs/                   # Logs (não versionado)
-│   └── requirements.txt        # Dependências
-├── .github/workflows/          # CI/CD e GitHub Pages
-└── README.md                   # Este documento
+ARRUMANDO
 ```
 
 ---

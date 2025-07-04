@@ -1,43 +1,52 @@
 *** Settings ***
-Documentation    Arquivo base com inicialização de sessão e variáveis comuns
+Documentation    Resource base: variáveis globais, sessão HTTP e helpers genéricos.
+
 Library          RequestsLibrary
 Library          OperatingSystem
 Library          Collections
 Library          JSONLibrary
+Library          Browser
 Library          ../utils/db_keywords.py
 Library          ../utils/GeminiValidationLibrary.py    WITH NAME    base
-Library    Browser
+
+Resource         ../resources/pages/browser_po.resource
+Resource         ../resources/pages/login_po.resource
+Resource         ../resources/pages/movies_po.resource
+Resource         ../resources/pages/payment_po.resource
+Resource         ../resources/pages/register_po.resource
+Resource         ../resources/pages/reservation_po.resource
+Resource         ../resources/pages/seat_po.resource
+Resource         ../resources/pages/sessions_po.resource
+
+Resource         ../resources/services/auth_so.resource
+Resource         ../resources/services/movies_so.resource
+Resource         ../resources/services/reservation_so.resource
+Resource         ../resources/services/session_so.resource
+Resource         ../resources/services/theater_so.resource
 
 *** Variables ***
-# Loca / Nuvem - Mudar antes de mandar para Develop
-# ${BASE_API_URL}    http://localhost:3000/api/v1
-${BASE_API_URL}    https://cinema-challenge-back-xelh.onrender.com/api/v1
+${BASE_API_URL}      https://cinema-challenge-back-xelh.onrender.com/api/v1
 ${BASE_FRONT_URL}    https://cinema-challenge-front.onrender.com/
-${BROWSER}    chromium
+${BROWSER}           chromium
 
 *** Keywords ***
 Criar Sessão API
-    # Cria uma sessão HTTP nomeada "CinemaAPP" com a URL base da API
+    [Documentation]    `Create Session   CinemaAPP   ${BASE_API_URL}` – inicia sessão Requests.
     Create Session    CinemaAPP    ${BASE_API_URL}
 
-Iniciar Navegador
-    New Browser    browser=${BROWSER}    headless=true
-    New Page       url=${BASE_FRONT_URL}
-
-Fechar Navegador
-    Close Browser
-
-Iniciar Página Limpa
-    New Context
-    New Page       url=${BASE_FRONT_URL}
-
 Validar Código de Status
+    [Documentation]    Compara status da última resposta com valor esperado.
     [Arguments]                    ${status_esperado}
-    # Compara o status da última resposta com o esperado
     Should Be Equal As Integers    ${ULTIMA_RESPOSTA.status_code}    ${status_esperado}
 
+Validar Mensagem Response
+    [Documentation]    Verifica se campo 'message' da última resposta é igual ao esperado.
+    [Arguments]        ${mensagem_esperada}
+    ${mensagem}=       Set Variable            ${ULTIMA_RESPOSTA.json()['message']}
+    Should Be Equal    ${mensagem}             ${mensagem_esperada}
+
 Analisar e Validar Resposta com IA
-    # Valida o status code e o conteúdo de uma resposta usando o Gemini.
+    [Documentation]    Usa Gemini para comparar corpo + status da resposta com contexto esperado.
     [Arguments]    ${status_code_esperado}    ${contexto_esperado}
     
     ${analise}=    Validar Resposta Da Api Com Ia
@@ -47,9 +56,3 @@ Analisar e Validar Resposta com IA
     ...            ${contexto_esperado}             # Argumento 4: contexto_esperado
     
     Log To Console    \nAnálise da IA: ${analise}
-
-Validar Mensagem Response
-    # Valida a Mensagem de Retorno
-    [Arguments]        ${mensagem_esperada}
-    ${mensagem}=       Set Variable            ${ULTIMA_RESPOSTA.json()['message']}
-    Should Be Equal    ${mensagem}             ${mensagem_esperada}
